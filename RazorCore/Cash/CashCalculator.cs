@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RazorCore.Subscription;
 
@@ -25,30 +26,16 @@ namespace RazorCore.Cash
 			if (!_cashIntervalsProvider.GetIntervals().Any())
 				return 0;
 
-			var totalCash = 0.0;
-			foreach (var cashInterval in _cashIntervalsProvider.GetIntervals())
-			{
-				var date = cashInterval.FromDate;
+			return _cashIntervalsProvider.GetIntervals()
+				.Sum(cashInterval => GetCashForOneInterval(calculationDate, cashInterval));
+		}
 
-				while (date <= calculationDate && date <= cashInterval.ToDate)
-				{
-					var subscriptionPlan = cashInterval.SubscriptionPlan;
-					if (subscriptionPlan.DeliveryRegularity == DeliveryRegularity.Suspended)
-						break;
+		private double GetCashForOneInterval(DateTime calculationDate, CashInterval cashInterval)
+		{
+			var deliveryDates = cashInterval.GetDeliveryDates(calculationDate, cashInterval);
 
-					var isDeliveryDay = subscriptionPlan.DeliveryTime.DeliveryDays.ToList().Contains(date.Day);
-					var isDeliveryMonth = subscriptionPlan.DeliveryRegularity != DeliveryRegularity.OncePerTwoMonths || (cashInterval.FromDate.Month - date.Month) % 2 == 0;
-					if (isDeliveryDay && isDeliveryMonth)
-					{
-						var price = _priceList.GetPrice(subscriptionPlan.SubscriptionType);
-						totalCash += price;
-					}
-
-					date = date.AddDays(1);
-				}
-			}
-
-			return totalCash;
+			return deliveryDates.Sum(deliveryDate => _priceList.GetPrice(
+				cashInterval.SubscriptionPlan.SubscriptionType));
 		}
 	}
 }
