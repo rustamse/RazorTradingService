@@ -67,6 +67,7 @@
     <Compile Include="Subscription\DeliveryRegularity.cs" />
     <Compile Include="Subscription\SubscriptionTypes.cs" />
     <Compile Include="Tests\CashCalculatorTest.cs" />
+    <Compile Include="Tests\CashIntervalsProviderTest.cs" />
     <Compile Include="Tests\Helper.cs" />
     <Compile Include="Tests\SubscriptionHistoryTest.cs" />
     <Compile Include="Tests\SubscriptionPlanTest.cs" />
