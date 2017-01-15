@@ -35,7 +35,7 @@ namespace RazorCore.Tests
 			var subscriptionPlan = new SubscriptionPlan(razorAndGel,
 				DeliveryRegularity.OncePerMonth, new DeliveryTime(1));
 
-			Assert.AreEqual(razorAndGel, subscriptionPlan.SubscriptionTypes);
+			Assert.AreEqual(razorAndGel, subscriptionPlan.SubscriptionType);
 		}
 
 		[Test]

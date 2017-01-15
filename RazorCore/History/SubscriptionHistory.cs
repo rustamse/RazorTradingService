@@ -4,7 +4,7 @@ using RazorCore.Subscription;
 
 namespace RazorCore.History
 {
-	public class SubscriptionHistory
+	public class SubscriptionHistory : ISubscriptionHistory
 	{
 		private readonly List<HistoryItem> _historyItems = new List<HistoryItem>();
 

@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RazorCore.History;
+using RazorCore.Subscription;
 
 namespace RazorCore.Cash
 {
 	class CashCalculator
 	{
-		private readonly SubscriptionHistory _subscriptionHistory;
+		private readonly ISubscriptionHistory _subscriptionHistory;
+		private readonly IPriceList _priceList;
 
-		public CashCalculator(SubscriptionHistory subscriptionHistory)
+		public CashCalculator(ISubscriptionHistory subscriptionHistory, IPriceList priceList)
 		{
 			if (subscriptionHistory == null)
 				throw new ArgumentNullException(nameof(subscriptionHistory));
+			if (priceList == null)
+				throw new ArgumentNullException(nameof(priceList));
 
 			_subscriptionHistory = subscriptionHistory;
+			_priceList = priceList;
 		}
 
 		public double GetCashByDate(DateTime calculationDate)
@@ -24,7 +26,8 @@ namespace RazorCore.Cash
 			if (!_subscriptionHistory.GetHistory().Any())
 				return 0;
 
-			return 0;
+			var subscriptionTypes = _subscriptionHistory.GetHistory().First().SubscriptionPlan.SubscriptionType;
+			return _priceList.GetPrice(subscriptionTypes);
 		}
 	}
 }

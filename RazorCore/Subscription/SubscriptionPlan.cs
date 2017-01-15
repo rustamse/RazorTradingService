@@ -4,17 +4,17 @@ namespace RazorCore.Subscription
 {
 	public class SubscriptionPlan
 	{
-		public readonly SubscriptionTypes SubscriptionTypes;
+		public readonly SubscriptionTypes SubscriptionType;
 		public readonly DeliveryRegularity DeliveryRegularity;
 		public readonly DeliveryTime DeliveryTime;
 
-		public SubscriptionPlan(SubscriptionTypes subscriptionTypes,
+		public SubscriptionPlan(SubscriptionTypes subscriptionType,
 			DeliveryRegularity deliveryRegularity, DeliveryTime deliveryTime)
 		{
 			if (deliveryTime == null)
 				throw new ArgumentNullException(nameof(deliveryTime));
 
-			SubscriptionTypes = subscriptionTypes;
+			SubscriptionType = subscriptionType;
 			DeliveryRegularity = deliveryRegularity;
 			DeliveryTime = deliveryTime;
 
