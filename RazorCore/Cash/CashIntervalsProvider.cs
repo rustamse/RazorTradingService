@@ -27,9 +27,12 @@ namespace RazorCore.Cash
 
 			var cashIntervals = new List<CashInterval>();
 
-			for (int i=0; i < historyItems.Count - 1; i++)
+			if (!historyItems.Any())
+				return cashIntervals;
+
+			for (int i = 0; i < historyItems.Count - 1; i++)
 			{
-				var cashInterval = new CashInterval(historyItems[i].SubscriptionPlan, historyItems[i].FromDate, historyItems[i+1].FromDate);
+				var cashInterval = new CashInterval(historyItems[i].SubscriptionPlan, historyItems[i].FromDate, historyItems[i + 1].FromDate);
 				cashIntervals.Add(cashInterval);
 			}
 

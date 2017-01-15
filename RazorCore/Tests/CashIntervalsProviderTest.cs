@@ -36,5 +36,18 @@ namespace RazorCore.Tests
 				});
 			return history.Object;
 		}
+
+		[Test]
+		public void GetIntervals_WhenHasHistoryAndCashDateBeforeHistory_ReturnsNoIntervals()
+		{
+			var historyStartJan1 = Helper.GenerateSubscrDate("1 jan 2017");
+			var cashDateJan15 = Helper.GenerateSubscrDate("1 dec 2016");
+			var history = GenerateHistoryFromJan1(historyStartJan1);
+
+			var cashIntervalsProvider = new CashIntervalsProvider(history, cashDateJan15);
+			var cashIntervals = cashIntervalsProvider.GetIntervals();
+
+			Assert.False(cashIntervals.Any());
+		}
 	}
 }
