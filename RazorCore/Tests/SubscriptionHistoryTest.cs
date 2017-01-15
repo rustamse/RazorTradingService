@@ -53,18 +53,18 @@ namespace RazorCore.Tests
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().Last().FromDate);
 		}
 
-		//[Test]
-		//public void GetHistory_WhenAddSecondWithSmallerTime_ReturnsAddedSubscriptionFirstInHistory()
-		//{
-		//	var initialDate = GenerateSubscrDate("15 jan 2017");
-		//	var addedDate = GenerateSubscrDate("10 jan 2017");
+		[Test]
+		public void GetHistory_WhenAddSecondWithSmallerTime_ReturnsAddedSubscriptionFirstInHistory()
+		{
+			var initialDate = GenerateSubscrDate("15 jan 2017");
+			var addedDate = GenerateSubscrDate("10 jan 2017");
 
-		//	var subscriptionHistory = new SubscriptionHistory();
-		//	subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
-		//	subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), addedDate);
+			var subscriptionHistory = new SubscriptionHistory();
+			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
+			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), addedDate);
 
-		//	Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
-		//}
+			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
+		}
 
 		private static SubscriptionPlan GenerateStdSubscrPlan()
 		{

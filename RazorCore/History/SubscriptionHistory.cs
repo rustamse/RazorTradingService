@@ -13,14 +13,21 @@ namespace RazorCore.History
 			if (subscriptionPlan == null)
 				throw new ArgumentNullException(nameof(subscriptionPlan));
 
-			var fromDate = fromTime.Date;
+			var newItemDate = fromTime.Date;
 
-			_historyItems.Add(new HistoryItem(subscriptionPlan, fromDate));
+			_historyItems.Add(new HistoryItem(subscriptionPlan, newItemDate));
+
+			SortHistoryItemsByAsc();
 		}
 
 		public IEnumerable<HistoryItem> GetHistory()
 		{
 			return _historyItems;
+		}
+
+		private void SortHistoryItemsByAsc()
+		{
+			_historyItems.Sort((item, historyItem) => item.FromDate.CompareTo(historyItem.FromDate));
 		}
 	}
 }
