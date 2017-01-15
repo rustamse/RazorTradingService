@@ -15,7 +15,7 @@ namespace RazorCore.Tests
 		{
 			var subscriptionHistory = new SubscriptionHistory();
 
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), GenerateSubscrDate("15 jan 2017"));
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("15 jan 2017"));
 
 			Assert.AreEqual(1, subscriptionHistory.GetHistory().Count());
 		}
@@ -24,8 +24,8 @@ namespace RazorCore.Tests
 		public void GetHistory_WhenAddOneSubscriptionPlan_ReturnsSubscriptionPlanWithSameDate()
 		{
 			var subscriptionHistory = new SubscriptionHistory();
-			var fromTime = GenerateSubscrDate("15 jan 2017");
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), fromTime);
+			var fromTime = Helper.GenerateSubscrDate("15 jan 2017");
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), fromTime);
 
 			Assert.AreEqual(fromTime, subscriptionHistory.GetHistory().First().FromDate);
 		}
@@ -34,8 +34,8 @@ namespace RazorCore.Tests
 		public void GetHistory_WhenAddSecondSubscriptionPlan_ReturnsTwoItemsHistory()
 		{
 			var subscriptionHistory = new SubscriptionHistory();
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), GenerateSubscrDate("15 jan 2017"));
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), GenerateSubscrDate("20 jan 2017"));
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("15 jan 2017"));
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("20 jan 2017"));
 
 			Assert.AreEqual(2, subscriptionHistory.GetHistory().Count());
 		}
@@ -43,12 +43,12 @@ namespace RazorCore.Tests
 		[Test]
 		public void GetHistory_WhenAddSecondWithBiggerDate_ReturnsAddedSubscriptionLastInHistory()
 		{
-			var initialDate = GenerateSubscrDate("15 jan 2017");
-			var addedDate = GenerateSubscrDate("20 jan 2017");
+			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
+			var addedDate = Helper.GenerateSubscrDate("20 jan 2017");
 
 			var subscriptionHistory = new SubscriptionHistory();
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), addedDate);
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), initialDate);
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), addedDate);
 
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().Last().FromDate);
 		}
@@ -56,12 +56,12 @@ namespace RazorCore.Tests
 		[Test]
 		public void GetHistory_WhenAddSecondWithSmallerDate_ReturnsAddedSubscriptionFirstInHistory()
 		{
-			var initialDate = GenerateSubscrDate("15 jan 2017");
-			var addedDate = GenerateSubscrDate("10 jan 2017");
+			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
+			var addedDate = Helper.GenerateSubscrDate("10 jan 2017");
 
 			var subscriptionHistory = new SubscriptionHistory();
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), addedDate);
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), initialDate);
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), addedDate);
 
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
 		}
@@ -69,27 +69,16 @@ namespace RazorCore.Tests
 		[Test]
 		public void GetHistory_WhenAddSecondWithTheSameDate_ReturnsOneItemHistoryWhichEqualsToAdded()
 		{
-			var initialDate = GenerateSubscrDate("15 jan 2017");
-			var addedDate = GenerateSubscrDate("15 jan 2017");
-			var addedSubscrPlan = GenerateStdSubscrPlan();
+			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
+			var addedDate = Helper.GenerateSubscrDate("15 jan 2017");
+			var addedSubscrPlan = Helper.GenerateStdSubscrPlan();
 
 			var subscriptionHistory = new SubscriptionHistory();
-			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
+			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), initialDate);
 			subscriptionHistory.AddSubscrption(addedSubscrPlan, addedDate);
 
 			Assert.AreEqual(1, subscriptionHistory.GetHistory().Count());
 			Assert.AreEqual(addedSubscrPlan, subscriptionHistory.GetHistory().First().SubscriptionPlan);
-		}
-
-		private static SubscriptionPlan GenerateStdSubscrPlan()
-		{
-			return new SubscriptionPlan(SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth, new DeliveryTime(1));
-		}
-
-		private static DateTime GenerateSubscrDate(string date)
-		{
-			var generateSubscrDate = DateTime.Parse(date, CultureInfo.InvariantCulture);
-			return generateSubscrDate.Date;
 		}
 	}
 }
