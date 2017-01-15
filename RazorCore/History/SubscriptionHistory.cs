@@ -13,7 +13,9 @@ namespace RazorCore.History
 			if (subscriptionPlan == null)
 				throw new ArgumentNullException(nameof(subscriptionPlan));
 
-			_historyItems.Add(new HistoryItem(subscriptionPlan, fromTime));
+			var fromDate = fromTime.Date;
+
+			_historyItems.Add(new HistoryItem(subscriptionPlan, fromDate));
 		}
 
 		public IEnumerable<HistoryItem> GetHistory()
