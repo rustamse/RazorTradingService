@@ -123,5 +123,37 @@ namespace RazorCore.Tests
 			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
 			return cashCalculator;
 		}
+
+		[Test(Description = "Если подписка приостановлена постоянно, то стоимость нулевая.")]
+		public void GetCashByDate_WhenDeliverySuspended_ReturnsZeroCost()
+		{
+			var cashCalculator = InitCashCalculatorWhenDeliverySuspended();
+			var date = Helper.GenerateSubscrDate("1 jan 2018");
+			var resultCash = cashCalculator.GetCashByDate(date);
+
+			Assert.AreEqual(0, resultCash);
+		}
+
+		private static CashCalculator InitCashCalculatorWhenDeliverySuspended()
+		{
+			var history = new Mock<ICashIntervalsProvider>();
+			var priceList = new Mock<IPriceList>();
+			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
+				.Returns(() =>
+				{
+					var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
+						DeliveryRegularity.Suspended, new DeliveryTime(10));
+					var cashIntervals = new List<CashInterval>
+					{
+						new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate("1 jan 2017"),
+							Helper.GenerateSubscrDate("1 jan 2018"))
+					};
+					return cashIntervals;
+				});
+			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
+				.Returns(1);
+			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
+			return cashCalculator;
+		}
 	}
 }

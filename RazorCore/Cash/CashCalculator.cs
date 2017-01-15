@@ -32,11 +32,15 @@ namespace RazorCore.Cash
 
 				while (date <= calculationDate && date <= cashInterval.ToDate)
 				{
-					var isDeliveryDay = cashInterval.SubscriptionPlan.DeliveryTime.DeliveryDays.ToList().Contains(date.Day);
-					var isDeliveryMonth = cashInterval.SubscriptionPlan.DeliveryRegularity != DeliveryRegularity.OncePerTwoMonths || (cashInterval.FromDate.Month - date.Month) % 2 == 0;
+					var subscriptionPlan = cashInterval.SubscriptionPlan;
+					if (subscriptionPlan.DeliveryRegularity == DeliveryRegularity.Suspended)
+						break;
+
+					var isDeliveryDay = subscriptionPlan.DeliveryTime.DeliveryDays.ToList().Contains(date.Day);
+					var isDeliveryMonth = subscriptionPlan.DeliveryRegularity != DeliveryRegularity.OncePerTwoMonths || (cashInterval.FromDate.Month - date.Month) % 2 == 0;
 					if (isDeliveryDay && isDeliveryMonth)
 					{
-						var price = _priceList.GetPrice(cashInterval.SubscriptionPlan.SubscriptionType);
+						var price = _priceList.GetPrice(subscriptionPlan.SubscriptionType);
 						totalCash += price;
 					}
 

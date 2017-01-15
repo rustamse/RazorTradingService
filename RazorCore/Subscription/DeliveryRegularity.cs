@@ -4,6 +4,7 @@
 	{
 		OncePerTwoMonths,
 		OncePerMonth,
-		TwicePerMonth
+		TwicePerMonth,
+		Suspended
 	}
 }
