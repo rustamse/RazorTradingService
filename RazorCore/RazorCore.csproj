@@ -54,6 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cash\CashCalculator.cs" />
+    <Compile Include="Cash\CashInterval.cs" />
+    <Compile Include="Cash\CashIntervalsProvider.cs" />
+    <Compile Include="Cash\ICashIntervalsProvider.cs" />
     <Compile Include="Cash\IPriceList.cs" />
     <Compile Include="History\ISubscriptionHistory.cs" />
     <Compile Include="Subscription\DeliveryTime.cs" />
