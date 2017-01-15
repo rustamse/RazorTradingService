@@ -91,5 +91,37 @@ namespace RazorCore.Tests
 			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
 			return cashCalculator;
 		}
+
+		[Test]
+		public void GetCashByDate_WhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths_ReturnsCostOfSixDelivery()
+		{
+			var cashCalculator = InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths();
+			var date = Helper.GenerateSubscrDate("1 jan 2018");
+			var resultCash = cashCalculator.GetCashByDate(date);
+
+			Assert.AreEqual(1 * 6, resultCash);
+		}
+
+		private static CashCalculator InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths()
+		{
+			var history = new Mock<ICashIntervalsProvider>();
+			var priceList = new Mock<IPriceList>();
+			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
+				.Returns(() =>
+				{
+					var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
+						DeliveryRegularity.OncePerTwoMonths, new DeliveryTime(10));
+					var cashIntervals = new List<CashInterval>
+					{
+						new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate("1 jan 2017"),
+							Helper.GenerateSubscrDate("1 jan 2018"))
+					};
+					return cashIntervals;
+				});
+			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
+				.Returns(1);
+			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
+			return cashCalculator;
+		}
 	}
 }

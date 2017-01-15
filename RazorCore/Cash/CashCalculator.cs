@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using RazorCore.Subscription;
 
 namespace RazorCore.Cash
 {
@@ -32,7 +33,8 @@ namespace RazorCore.Cash
 				while (date <= calculationDate && date <= cashInterval.ToDate)
 				{
 					var isDeliveryDay = cashInterval.SubscriptionPlan.DeliveryTime.DeliveryDays.ToList().Contains(date.Day);
-					if (isDeliveryDay)
+					var isDeliveryMonth = cashInterval.SubscriptionPlan.DeliveryRegularity != DeliveryRegularity.OncePerTwoMonths || (cashInterval.FromDate.Month - date.Month) % 2 == 0;
+					if (isDeliveryDay && isDeliveryMonth)
 					{
 						var price = _priceList.GetPrice(cashInterval.SubscriptionPlan.SubscriptionType);
 						totalCash += price;
