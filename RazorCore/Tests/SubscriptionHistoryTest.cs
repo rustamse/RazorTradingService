@@ -1,9 +1,6 @@
-using System;
-using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using RazorCore.History;
-using RazorCore.Subscription;
 
 namespace RazorCore.Tests
 {

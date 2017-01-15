@@ -15,8 +15,7 @@ namespace RazorCore.Tests
 			var history = new Mock<ICashIntervalsProvider>();
 			var priceList = new Mock<IPriceList>();
 			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			var date = Helper.GenerateSubscrDate("15 jan 2017");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(0, resultCash);
 		}
@@ -25,8 +24,7 @@ namespace RazorCore.Tests
 		public void GetCashByDate_WhenHistoryHadOneDelivery_ReturnsCostOfOneDelivery()
 		{
 			var cashCalculator = InitCashCalculatorWithOneHistoryElement();
-			var date = Helper.GenerateSubscrDate("15 jan 2017");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1, resultCash);
 		}
@@ -57,8 +55,7 @@ namespace RazorCore.Tests
 		public void GetCashByDate_WhenHistoryHasFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery_ReturnsCostOfThreeDelivery()
 		{
 			var cashCalculator = InitCashCalculatorWithFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery();
-			var date = Helper.GenerateSubscrDate("30 mar 2017");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1 + 1 + 9, resultCash);
 		}
@@ -96,8 +93,7 @@ namespace RazorCore.Tests
 		public void GetCashByDate_WhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths_ReturnsCostOfSixDelivery()
 		{
 			var cashCalculator = InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths();
-			var date = Helper.GenerateSubscrDate("1 jan 2018");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1 * 6, resultCash);
 		}
@@ -128,8 +124,7 @@ namespace RazorCore.Tests
 		public void GetCashByDate_WhenDeliverySuspended_ReturnsZeroCost()
 		{
 			var cashCalculator = InitCashCalculatorWhenDeliverySuspended();
-			var date = Helper.GenerateSubscrDate("1 jan 2018");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(0, resultCash);
 		}
@@ -160,8 +155,7 @@ namespace RazorCore.Tests
 		public void GetCashByDate_WhenDeliveryPresentAfterSuspendedAfterSuspend_ReturnsOneDeliveryCost()
 		{
 			var cashCalculator = InitCashCalculatorWhenDeliveryPresentAfterSuspendedAfterSuspend();
-			var date = Helper.GenerateSubscrDate("1 aug 2017");
-			var resultCash = cashCalculator.GetCashByDate(date);
+			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1, resultCash);
 		}

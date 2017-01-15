@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorCore", "RazorCore.csproj", "{38DEE041-4E46-4F0C-9329-FF1E13E51C93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorWpf", "..\RazorWpf\RazorWpf.csproj", "{3E4270B5-2882-49B6-9BB2-1A05F3DE113A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{38DEE041-4E46-4F0C-9329-FF1E13E51C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38DEE041-4E46-4F0C-9329-FF1E13E51C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38DEE041-4E46-4F0C-9329-FF1E13E51C93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E4270B5-2882-49B6-9BB2-1A05F3DE113A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E4270B5-2882-49B6-9BB2-1A05F3DE113A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E4270B5-2882-49B6-9BB2-1A05F3DE113A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E4270B5-2882-49B6-9BB2-1A05F3DE113A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

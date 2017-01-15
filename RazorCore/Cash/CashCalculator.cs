@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using RazorCore.Subscription;
 
 namespace RazorCore.Cash
 {
@@ -21,18 +19,18 @@ namespace RazorCore.Cash
 			_priceList = priceList;
 		}
 
-		public double GetCashByDate(DateTime calculationDate)
+		public double CalculateTotalCash()
 		{
 			if (!_cashIntervalsProvider.GetIntervals().Any())
 				return 0;
 
 			return _cashIntervalsProvider.GetIntervals()
-				.Sum(cashInterval => GetCashForOneInterval(calculationDate, cashInterval));
+				.Sum(cashInterval => GetCashForOneInterval(cashInterval));
 		}
 
-		private double GetCashForOneInterval(DateTime calculationDate, CashInterval cashInterval)
+		private double GetCashForOneInterval(CashInterval cashInterval)
 		{
-			var deliveryDates = cashInterval.GetDeliveryDates(calculationDate, cashInterval);
+			var deliveryDates = cashInterval.GetDeliveryDates();
 
 			return deliveryDates.Sum(deliveryDate => _priceList.GetPrice(
 				cashInterval.SubscriptionPlan.SubscriptionType));
