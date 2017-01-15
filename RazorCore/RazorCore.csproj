@@ -46,10 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Subscription\DeliveryTime.cs" />
+    <Compile Include="History\SubscriptionHistory.cs" />
+    <Compile Include="History\HistoryItem.cs" />
     <Compile Include="Subscription\SubscriptionPlan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscription\DeliveryRegularity.cs" />
     <Compile Include="Subscription\SubscriptionTypes.cs" />
+    <Compile Include="Tests\SubscriptionHistoryTest.cs" />
     <Compile Include="Tests\SubscriptionPlanTest.cs" />
   </ItemGroup>
   <ItemGroup>
