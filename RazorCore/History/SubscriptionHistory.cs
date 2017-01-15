@@ -15,6 +15,8 @@ namespace RazorCore.History
 
 			var newItemDate = fromTime.Date;
 
+			RemoveItemWithTheSameDate(newItemDate);
+
 			_historyItems.Add(new HistoryItem(subscriptionPlan, newItemDate));
 
 			SortHistoryItemsByAsc();
@@ -23,6 +25,11 @@ namespace RazorCore.History
 		public IEnumerable<HistoryItem> GetHistory()
 		{
 			return _historyItems;
+		}
+
+		private void RemoveItemWithTheSameDate(DateTime date)
+		{
+			_historyItems.RemoveAll(item => item.FromDate == date);
 		}
 
 		private void SortHistoryItemsByAsc()

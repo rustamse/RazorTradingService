@@ -41,7 +41,7 @@ namespace RazorCore.Tests
 		}
 
 		[Test]
-		public void GetHistory_WhenAddSecondWithBiggerTime_ReturnsAddedSubscriptionLastInHistory()
+		public void GetHistory_WhenAddSecondWithBiggerDate_ReturnsAddedSubscriptionLastInHistory()
 		{
 			var initialDate = GenerateSubscrDate("15 jan 2017");
 			var addedDate = GenerateSubscrDate("20 jan 2017");
@@ -54,7 +54,7 @@ namespace RazorCore.Tests
 		}
 
 		[Test]
-		public void GetHistory_WhenAddSecondWithSmallerTime_ReturnsAddedSubscriptionFirstInHistory()
+		public void GetHistory_WhenAddSecondWithSmallerDate_ReturnsAddedSubscriptionFirstInHistory()
 		{
 			var initialDate = GenerateSubscrDate("15 jan 2017");
 			var addedDate = GenerateSubscrDate("10 jan 2017");
@@ -64,6 +64,21 @@ namespace RazorCore.Tests
 			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), addedDate);
 
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
+		}
+
+		[Test]
+		public void GetHistory_WhenAddSecondWithTheSameDate_ReturnsOneItemHistoryWhichEqualsToAdded()
+		{
+			var initialDate = GenerateSubscrDate("15 jan 2017");
+			var addedDate = GenerateSubscrDate("15 jan 2017");
+			var addedSubscrPlan = GenerateStdSubscrPlan();
+
+			var subscriptionHistory = new SubscriptionHistory();
+			subscriptionHistory.AddSubscrption(GenerateStdSubscrPlan(), initialDate);
+			subscriptionHistory.AddSubscrption(addedSubscrPlan, addedDate);
+
+			Assert.AreEqual(1, subscriptionHistory.GetHistory().Count());
+			Assert.AreEqual(addedSubscrPlan, subscriptionHistory.GetHistory().First().SubscriptionPlan);
 		}
 
 		private static SubscriptionPlan GenerateStdSubscrPlan()
