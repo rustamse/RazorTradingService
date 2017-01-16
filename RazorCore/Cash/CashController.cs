@@ -22,9 +22,14 @@ namespace RazorCore.Cash
 			CurrentDate = startDate;
 		}
 
-		public void SetSubscriptionPlan(SubscriptionPlan subscriptionPlan)
+		public void AddOrUpdateSubscriptionPlan(SubscriptionPlan subscriptionPlan)
 		{
 			_subscriptionHistory.AddSubscrption(subscriptionPlan, CurrentDate);
+		}
+
+		public IEnumerable<HistoryItem> GetSubscriptionHistory()
+		{
+			return _subscriptionHistory.GetHistory();
 		}
 
 		public double CalculateTotalCash()
@@ -53,15 +58,6 @@ namespace RazorCore.Cash
 		{
 			var activeCashInterval = FindActiveCashInterval();
 			return activeCashInterval?.SubscriptionPlan;
-		}
-
-		public bool IsTodaySubscriptionStart()
-		{
-			var activeCashInterval = FindActiveCashInterval();
-			if (activeCashInterval == null)
-				return false;
-
-			return activeCashInterval.FromDate == CurrentDate;
 		}
 
 		private CashInterval FindActiveCashInterval()

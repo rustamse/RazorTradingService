@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using RazorCore.Cash;
@@ -13,7 +14,7 @@ namespace RazorWpf
 	{
 		private readonly CashController _cashController;
 
-		private readonly CalenderBackground _calendarBackground;
+		private CalenderBackground _calendarBackground;
 
 		public MainWindow()
 		{
@@ -21,36 +22,26 @@ namespace RazorWpf
 
 			for (int i = 1; i <= 28; i++)
 			{
-				RazorComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
-				RazorAndGelComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
-				RazorAndGelAndFoam1ComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
-				RazorAndGelAndFoam2ComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
+				DeliveryOncePer2MonthsComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
+				DeliveryOncePerMonthComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
+				DeliveryTwicePerMonthComboBox.Items.Add(new ComboBoxItem { Content = i.ToString() });
+				DeliveryTwicePerMonthComboBox2.Items.Add(new ComboBoxItem { Content = i.ToString() });
 			}
 
-			RazorComboBox.SelectedIndex = 0;
-			RazorAndGelComboBox.SelectedIndex = 0;
-			RazorAndGelAndFoam1ComboBox.SelectedIndex = 0;
-			RazorAndGelAndFoam2ComboBox.SelectedIndex = 14;
+			DeliveryOncePer2MonthsComboBox.SelectedIndex = 0;
+			DeliveryOncePerMonthComboBox.SelectedIndex = 0;
+			DeliveryTwicePerMonthComboBox.SelectedIndex = 0;
+			DeliveryTwicePerMonthComboBox2.SelectedIndex = 14;
 
 			var priceList = new PriceList(1, 9, 19);
 			_cashController = new CashController(DateTime.Now.Date, priceList);
 
-			_calendarBackground = new CalenderBackground(Calendar);
-			_calendarBackground.AddOverlay("circle", "circle.png");
-			_calendarBackground.AddOverlay("tjek", "tjek.png");
-			_calendarBackground.AddOverlay("cross", "cross.png");
-			_calendarBackground.AddOverlay("box", "box.png");
-			_calendarBackground.AddOverlay("gray", "gray.png");
-
-			_calendarBackground.grayoutweekends = "gray";
-
-			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
-
-			// Update background when changing the displayed month
 			Calendar.DisplayDateChanged += CalendarOnDisplayDateChanged;
 
 			Calendar.SelectedDatesChanged += CalendarOnSelectedDatesChanged;
-			Calendar.SelectedDate = DateTime.Now.Date;
+			Calendar.SelectedDate = _cashController.CurrentDate;
+
+			Update();
 		}
 
 		private void CalendarOnDisplayDateChanged(object sender, CalendarDateChangedEventArgs calendarDateChangedEventArgs)
@@ -65,24 +56,9 @@ namespace RazorWpf
 
 		private void OnMakeSubscriptionClick(object sender, RoutedEventArgs e)
 		{
-			SubscriptionPlan subscriptionPlan = null;
-			if (razorCheckBox.IsChecked == true)
-			{
-				subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth,
-					new DeliveryTime(RazorComboBox.SelectedIndex + 1));
-			}
-			if (razorAndGelCheckBox.IsChecked == true)
-			{
-				subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.RazorAndGel, DeliveryRegularity.OncePerMonth,
-					new DeliveryTime(RazorAndGelComboBox.SelectedIndex + 1));
-			}
-			else if (razorAndGelAndFoamCheckBox.IsChecked == true)
-			{
-				subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.OncePerMonth,
-					new DeliveryTime(RazorAndGelAndFoam1ComboBox.SelectedIndex + 1, RazorAndGelAndFoam2ComboBox.SelectedIndex + 1));
-			}
+			var subscriptionPlan = ParseSubscriptionPlan();
 
-			_cashController.SetSubscriptionPlan(subscriptionPlan);
+			_cashController.AddOrUpdateSubscriptionPlan(subscriptionPlan);
 
 			Update();
 		}
@@ -94,6 +70,18 @@ namespace RazorWpf
 			_cashController.CurrentDate = calendarSelectedDate;
 
 			var deliveryDays = _cashController.GetFutureDeliveryDays(_cashController.CurrentDate.AddYears(100));
+
+			_calendarBackground = new CalenderBackground(Calendar);
+			_calendarBackground.AddOverlay("circle", "circle.png");
+			_calendarBackground.AddOverlay("tjek", "tjek.png");
+			_calendarBackground.AddOverlay("cross", "cross.png");
+			_calendarBackground.AddOverlay("box", "box.png");
+			_calendarBackground.AddOverlay("gray", "gray.png");
+
+			_calendarBackground.grayoutweekends = "gray";
+
+			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
+
 			foreach (var deliveryDay in deliveryDays)
 			{
 				_calendarBackground.AddDate(deliveryDay, "circle");
@@ -101,7 +89,71 @@ namespace RazorWpf
 			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
 			CashTxt.Text = ((int)_cashController.CalculateTotalCash()).ToString();
 
-			MakeSubscription.Content = $"Оформить подписку с {calendarSelectedDate.ToString("d")}";
+			MakeSubscription.Content = _cashController.FindActivePlan() != null ?
+				$"Изменить подписку с {calendarSelectedDate.ToString("d")}" :
+				$"Оформить подписку с {calendarSelectedDate.ToString("d")}";
+
+			DateTxt.Text = $"Выбор даты (текущая дата: {calendarSelectedDate.ToString("d")})";
+
+			DrawSubscriptionHistory();
+		}
+
+		private void DrawSubscriptionHistory()
+		{
+			SubscrHistoryList.Items.Clear();
+			foreach (var historyItem in _cashController.GetSubscriptionHistory())
+			{
+				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
+				                            $"Тип: {historyItem.SubscriptionPlan.SubscriptionType}, " +
+											$"Доставка: {historyItem.SubscriptionPlan.DeliveryRegularity}, " +
+											$"{historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.LastOrDefault()}");
+			}
+		}
+
+		private SubscriptionPlan ParseSubscriptionPlan()
+		{
+			SubscriptionTypes subscriptionType;
+			DeliveryRegularity deliveryRegularity;
+			DeliveryTime deliveryTime;
+
+			if (RazorAndGelCheckBox.IsChecked == true)
+			{
+				subscriptionType = SubscriptionTypes.RazorAndGel;
+			}
+			else if (RazorAndGelAndFoamCheckBox.IsChecked == true)
+			{
+				subscriptionType = SubscriptionTypes.RazorAndGelAndFoam;
+			}
+			else
+			{
+				subscriptionType = SubscriptionTypes.Razor;
+			}
+
+			if (DeliveryOncePer2MonthsCheckBox.IsChecked == true)
+			{
+				deliveryRegularity = DeliveryRegularity.OncePerTwoMonths;
+				deliveryTime = new DeliveryTime(DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+			}
+			else if (DeliveryOncePerMonthCheckBox.IsChecked == true)
+			{
+				deliveryRegularity = DeliveryRegularity.OncePerMonth;
+				deliveryTime = new DeliveryTime(DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+			}
+			else if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
+			{
+				deliveryRegularity = DeliveryRegularity.TwicePerMonth;
+				deliveryTime = new DeliveryTime(DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
+					DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
+			}
+			else
+			{
+				deliveryRegularity = DeliveryRegularity.Suspended;
+				deliveryTime = new DeliveryTime(1);
+			}
+
+			var subscriptionPlan = new SubscriptionPlan(subscriptionType, deliveryRegularity,
+				deliveryTime);
+			return subscriptionPlan;
 		}
 	}
 }
