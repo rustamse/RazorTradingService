@@ -8,23 +8,26 @@ namespace RazorCore.Tests
 	public class SubscriptionHistoryTest
 	{
 		[Test]
-		public void GetHistory_WhenAddOneSubscriptionPlan_ReturnsOneSubscriptionPlan()
+		public void GetHistory_WhenAddOneSubscriptionPlan_ReturnsThisSubscriptionPlan()
 		{
 			var subscriptionHistory = new SubscriptionHistory();
+			var generateStdSubscrPlan = Helper.GenerateStdSubscrPlan();
 
-			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("15 jan 2017"));
+			subscriptionHistory.AddSubscrption(generateStdSubscrPlan, Helper.GenerateSubscrDate("15 jan 2017"));
 
-			Assert.AreEqual(1, subscriptionHistory.GetHistory().Count());
+			Assert.AreEqual(generateStdSubscrPlan,
+				subscriptionHistory.GetHistory().Single().SubscriptionPlan);
 		}
 
 		[Test]
-		public void GetHistory_WhenAddOneSubscriptionPlan_ReturnsSubscriptionPlanWithSameDate()
+		public void GetHistory_WhenAddOneSubscriptionPlan_ReturnsHistoruItemWithSameDate()
 		{
 			var subscriptionHistory = new SubscriptionHistory();
 			var fromTime = Helper.GenerateSubscrDate("15 jan 2017");
+
 			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), fromTime);
 
-			Assert.AreEqual(fromTime, subscriptionHistory.GetHistory().First().FromDate);
+			Assert.AreEqual(fromTime, subscriptionHistory.GetHistory().Single().FromDate);
 		}
 
 		[Test]
@@ -32,12 +35,14 @@ namespace RazorCore.Tests
 		{
 			var subscriptionHistory = new SubscriptionHistory();
 			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("15 jan 2017"));
+
 			subscriptionHistory.AddSubscrption(Helper.GenerateStdSubscrPlan(), Helper.GenerateSubscrDate("20 jan 2017"));
 
 			Assert.AreEqual(2, subscriptionHistory.GetHistory().Count());
 		}
 
-		[Test]
+		[Test(Description = "ѕроверка сортировки по времени: при добавлении элемента " +
+		                    "с большим временем этот элемент оказываетс€ в конце")]
 		public void GetHistory_WhenAddSecondWithBiggerDate_ReturnsAddedSubscriptionLastInHistory()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
@@ -50,7 +55,8 @@ namespace RazorCore.Tests
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().Last().FromDate);
 		}
 
-		[Test]
+		[Test(Description = "ѕроверка сортировки по времени: при добавлении элемента " +
+		                    "с меньшим временем этот элемент оказываетс€ в начале")]
 		public void GetHistory_WhenAddSecondWithSmallerDate_ReturnsAddedSubscriptionFirstInHistory()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
@@ -63,7 +69,8 @@ namespace RazorCore.Tests
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
 		}
 
-		[Test]
+		[Test(Description = "ѕровер€ем перезатирание истории при добавлении элемета " +
+		                    "со временем равным уже времени существующего элемента")]
 		public void GetHistory_WhenAddSecondWithTheSameDate_ReturnsOneItemHistoryWhichEqualsToAdded()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
