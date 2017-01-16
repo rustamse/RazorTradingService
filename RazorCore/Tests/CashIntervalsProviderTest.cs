@@ -11,19 +11,20 @@ namespace RazorCore.Tests
 	[TestFixture]
 	public class CashIntervalsProviderTest
 	{
-		[Test]
-		public void GetIntervals_WhenHasHistory_ReturnsOneInterval()
+		[Test(Description = "Когда история из 1 элемента и дата построения после, то" +
+							"Возвращает единственный интервал (от начала истории и до времени расчета)")]
+		public void GetIntervals_WhenHasHistoryAndCashDateAfter_ReturnsOneInterval()
 		{
 			var historyStartJan1 = Helper.GenerateSubscrDate("1 jan 2017");
 			var cashDateJan15 = Helper.GenerateSubscrDate("15 jan 2017");
 			var history = GenerateHistoryFromJan1(historyStartJan1);
-
 			var cashIntervalsProvider = new CashIntervalsProvider(history, cashDateJan15);
+
 			var cashIntervals = cashIntervalsProvider.GetIntervals()
 				.ToList();
 
-			Assert.AreEqual(historyStartJan1, cashIntervals.First().FromDate);
-			Assert.AreEqual(cashDateJan15, cashIntervals.First().ToDate);
+			Assert.AreEqual(historyStartJan1, cashIntervals.Single().FromDate);
+			Assert.AreEqual(cashDateJan15, cashIntervals.Single().ToDate);
 		}
 
 		private static ISubscriptionHistory GenerateHistoryFromJan1(DateTime historyStart)
@@ -37,26 +38,27 @@ namespace RazorCore.Tests
 			return history.Object;
 		}
 
-		[Test]
+		[Test(Description = "Когда история из 1 элемента и дата построения до, то" +
+							"Не  возвращает интервалов")]
 		public void GetIntervals_WhenHasHistoryAndCashDateBeforeHistory_ReturnsNoIntervals()
 		{
 			var historyStartJan1 = Helper.GenerateSubscrDate("1 jan 2017");
 			var cashDateJan15 = Helper.GenerateSubscrDate("1 dec 2016");
 			var history = GenerateHistoryFromJan1(historyStartJan1);
-
 			var cashIntervalsProvider = new CashIntervalsProvider(history, cashDateJan15);
+
 			var cashIntervals = cashIntervalsProvider.GetIntervals();
 
 			Assert.False(cashIntervals.Any());
 		}
 
-		[Test]
+		[Test(Description = "Когда нет истории, то нет и результирующих интервалов.")]
 		public void GetIntervals_WhenEmptyHistory_ReturnsNoIntervals()
 		{
 			var cashDateJan15 = Helper.GenerateSubscrDate("1 dec 2016");
 			var history = GenerateEmptyHistory();
-
 			var cashIntervalsProvider = new CashIntervalsProvider(history, cashDateJan15);
+
 			var cashIntervals = cashIntervalsProvider.GetIntervals();
 
 			Assert.False(cashIntervals.Any());
@@ -76,8 +78,8 @@ namespace RazorCore.Tests
 		{
 			var cashDateJan15 = Helper.GenerateSubscrDate("15 jan 2017");
 			var history = GenerateHistory2016_2017_2018();
-
 			var cashIntervalsProvider = new CashIntervalsProvider(history, cashDateJan15);
+
 			var cashIntervals = cashIntervalsProvider.GetIntervals();
 
 			Assert.AreEqual(2, cashIntervals.Count());

@@ -10,26 +10,28 @@ namespace RazorCore.Tests
 	public class CashCalculatorTest
 	{
 		[Test]
-		public void GetCashByDate_WhenEmptyHistory_Returns0()
+		public void CalculateTotalCash_WhenEmptyHistory_Returns0()
 		{
 			var history = new Mock<ICashIntervalsProvider>();
 			var priceList = new Mock<IPriceList>();
 			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(0, resultCash);
 		}
 
 		[Test]
-		public void GetCashByDate_WhenHistoryHadOneDelivery_ReturnsCostOfOneDelivery()
+		public void CalculateTotalCash_WhenHistoryHasOneDelivery_ReturnsCostOfOneDelivery()
 		{
-			var cashCalculator = InitCashCalculatorWithOneHistoryElement();
+			var cashCalculator = InitCashCalculatorWhenHistoryHasOneDelivery();
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1, resultCash);
 		}
 
-		private static CashCalculator InitCashCalculatorWithOneHistoryElement()
+		private static CashCalculator InitCashCalculatorWhenHistoryHasOneDelivery()
 		{
 			var history = new Mock<ICashIntervalsProvider>();
 			var priceList = new Mock<IPriceList>();
@@ -51,10 +53,12 @@ namespace RazorCore.Tests
 			return cashCalculator;
 		}
 
-		[Test]
-		public void GetCashByDate_WhenHistoryHasFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery_ReturnsCostOfThreeDelivery()
+		[Test(Description = "Когда у нас 2 достаки по 1 доллару + 1 доставка по 9 долларов, " +
+							"то общая стоимость получается 1+1+9")]
+		public void CalculateTotalCash_WhenHistoryHasFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery_ReturnsCostOfThreeDelivery()
 		{
 			var cashCalculator = InitCashCalculatorWithFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery();
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1 + 1 + 9, resultCash);
@@ -89,10 +93,11 @@ namespace RazorCore.Tests
 			return cashCalculator;
 		}
 
-		[Test]
-		public void GetCashByDate_WhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths_ReturnsCostOfSixDelivery()
+		[Test(Description = "При доставке раз в 2 месяца за год получается 6 доставок по 1 доллару")]
+		public void CalculateTotalCash_WhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths_ReturnsCostOfSixDelivery()
 		{
 			var cashCalculator = InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths();
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1 * 6, resultCash);
@@ -121,9 +126,10 @@ namespace RazorCore.Tests
 		}
 
 		[Test(Description = "Если подписка приостановлена постоянно, то стоимость нулевая.")]
-		public void GetCashByDate_WhenDeliverySuspended_ReturnsZeroCost()
+		public void CalculateTotalCash_WhenDeliverySuspended_ReturnsZeroCost()
 		{
 			var cashCalculator = InitCashCalculatorWhenDeliverySuspended();
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(0, resultCash);
@@ -151,10 +157,13 @@ namespace RazorCore.Tests
 			return cashCalculator;
 		}
 
-		[Test(Description = "Если подписка приостановлена постоянно, потом была, потом снова приостановлена, то стоимость будет равна одной доставке.")]
-		public void GetCashByDate_WhenDeliveryPresentAfterSuspendedAfterSuspend_ReturnsOneDeliveryCost()
+		[Test(Description = "Если подписка приостановлена постоянно, " +
+							"потом была, потом снова приостановлена, " +
+							"то стоимость будет равна одной доставке.")]
+		public void CalculateTotalCash_WhenDeliveryPresentAfterSuspendedAfterSuspend_ReturnsOneDeliveryCost()
 		{
 			var cashCalculator = InitCashCalculatorWhenDeliveryPresentAfterSuspendedAfterSuspend();
+
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(1, resultCash);

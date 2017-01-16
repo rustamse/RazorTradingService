@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RazorCore.Cash
 {
-	class CashCalculator
+	public class CashCalculator
 	{
 		private readonly ICashIntervalsProvider _cashIntervalsProvider;
 		private readonly IPriceList _priceList;

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RazorCore.Cash;
 using RazorCore.History;
 using RazorCore.Subscription;
 
-namespace RazorCore.Cash
+namespace RazorWpf
 {
-	public class CashController
+	class CashController
 	{
 		public DateTime CurrentDate { get; set; }
 
