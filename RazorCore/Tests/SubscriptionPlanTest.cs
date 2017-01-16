@@ -11,9 +11,9 @@ namespace RazorCore.Tests
 		public void Ctor_WhenDeliveryDay1_ReturnsDeliveryDay1()
 		{
 			var deliveryDay = 1;
-			var deliveryTime = new DeliveryTime(deliveryDay);
+
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-				DeliveryRegularity.OncePerMonth, deliveryTime);
+				DeliveryRegularity.OncePerMonth, new DeliveryTime(deliveryDay));
 
 			Assert.AreEqual(deliveryDay, subscriptionPlan.DeliveryTime.DeliveryDays[0]);
 		}
@@ -22,6 +22,7 @@ namespace RazorCore.Tests
 		public void Ctor_WhenRegularityOncePerTwoMonths_ReturnsRegularityOncePerTwoMonths()
 		{
 			var regularity = DeliveryRegularity.OncePerTwoMonths;
+
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
 				regularity, new DeliveryTime(1));
 
@@ -32,35 +33,42 @@ namespace RazorCore.Tests
 		public void Ctor_WhenSubscriptionTypeRazorAndGel_ReturnsSubscriptionTypeRazorAndGel()
 		{
 			var razorAndGel = SubscriptionTypes.RazorAndGel;
+
 			var subscriptionPlan = new SubscriptionPlan(razorAndGel,
 				DeliveryRegularity.OncePerMonth, new DeliveryTime(1));
 
 			Assert.AreEqual(razorAndGel, subscriptionPlan.SubscriptionType);
 		}
 
-		[Test]
+		[Test(Description = "Для доставки раз в месяц НЕ должно быть задано 2 дня доставки.")]
 		public void Ctor_WhenRegularityOncePerMonthAndDeliveryTwicePerMonth_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() =>
 			{
+				var firstDeliveryDay = 1;
+				var secondDeliveryDay = 5;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(1, 5));
+					DeliveryRegularity.OncePerMonth, new DeliveryTime(firstDeliveryDay, secondDeliveryDay));
 			});
 		}
 
-		[Test]
-		public void Ctor_WhenRegularityOncePerMonthAndDeliveryIsNull_ThorwsArgumentNull()
+		[Test(Description = "Время доставки должно быть задано обязательно (не ноль)")]
+		public void Ctor_WhenDeliveryIsNull_ThorwsArgumentNull()
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
+				DeliveryTime nullableDeliveryTime = null;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, null);
+					// ReSharper disable once ExpressionIsAlwaysNull
+					DeliveryRegularity.OncePerMonth, nullableDeliveryTime);
 			});
 		}
 
-		[Test]
+		[Test(Description = "Время доставики должно быть задано обязательно (не ноль)")]
 		public void Ctor_WhenRegularityOncePerMonthAndDeliveryContainsNull_ThorwsArgumentNull()
 		{
 			Assert.Throws<ArgumentNullException>(() =>
