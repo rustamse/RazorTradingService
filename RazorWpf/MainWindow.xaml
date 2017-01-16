@@ -11,15 +11,12 @@
 	<Grid Margin="0,0,-182,-169">
 		<StackPanel>
 			<StackPanel Margin="20">
-				<TextBlock FontSize="16">Текущая дата:</TextBlock>
-				<DatePicker Name="DatePicker"
-							HorizontalAlignment="Left"
-							Height="40"
-							VerticalAlignment="Top"
-							Width="300"
-							FirstDayOfWeek="Monday"
-							IsTodayHighlighted="True"
-							SelectedDateFormat="Short" />
+				<TextBlock Name="DateTxt"
+						   FontSize="16">Текущая дата:</TextBlock>
+				<Calendar Name="Calendar"
+						  FirstDayOfWeek="Monday"
+						  HorizontalAlignment="Left"
+						  IsTodayHighlighted="False"></Calendar>
 			</StackPanel>
 			<StackPanel Margin="50, 0">
 				<RadioButton x:Name="razorCheckBox"

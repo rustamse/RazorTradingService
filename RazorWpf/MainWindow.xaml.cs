@@ -9,9 +9,11 @@ namespace RazorWpf
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
 		private readonly CashController _cashController;
+
+		private readonly CalenderBackground _calendarBackground;
 
 		public MainWindow()
 		{
@@ -33,13 +35,32 @@ namespace RazorWpf
 			var priceList = new PriceList(1, 9, 19);
 			_cashController = new CashController(DateTime.Now.Date, priceList);
 
-			DatePicker.SelectedDateChanged += DatePickerOnSelectedDateChanged;
+			_calendarBackground = new CalenderBackground(Calendar);
+			_calendarBackground.AddOverlay("circle", "circle.png");
+			_calendarBackground.AddOverlay("tjek", "tjek.png");
+			_calendarBackground.AddOverlay("cross", "cross.png");
+			_calendarBackground.AddOverlay("box", "box.png");
+			_calendarBackground.AddOverlay("gray", "gray.png");
+
+			_calendarBackground.grayoutweekends = "gray";
+
+			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
+
+			// Update background when changing the displayed month
+			Calendar.DisplayDateChanged += CalendarOnDisplayDateChanged;
+
+			Calendar.SelectedDatesChanged += CalendarOnSelectedDatesChanged;
+			Calendar.SelectedDate = DateTime.Now.Date;
 		}
 
-		private void DatePickerOnSelectedDateChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+		private void CalendarOnDisplayDateChanged(object sender, CalendarDateChangedEventArgs calendarDateChangedEventArgs)
 		{
-			_cashController.CurrentDate = DatePicker.DisplayDate;
-			CashTxt.Text = ((int)_cashController.CalculateTotalCash()).ToString();
+			Update();
+		}
+
+		private void CalendarOnSelectedDatesChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+		{
+			Update();
 		}
 
 		private void OnMakeSubscriptionClick(object sender, RoutedEventArgs e)
@@ -63,7 +84,24 @@ namespace RazorWpf
 
 			_cashController.SetSubscriptionPlan(subscriptionPlan);
 
+			Update();
+		}
+
+		private void Update()
+		{
+			// ReSharper disable once PossibleInvalidOperationException
+			var calendarSelectedDate = Calendar.SelectedDate.Value;
+			_cashController.CurrentDate = calendarSelectedDate;
+
+			var deliveryDays = _cashController.GetFutureDeliveryDays(_cashController.CurrentDate.AddYears(100));
+			foreach (var deliveryDay in deliveryDays)
+			{
+				_calendarBackground.AddDate(deliveryDay, "circle");
+			}
+			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
 			CashTxt.Text = ((int)_cashController.CalculateTotalCash()).ToString();
+
+			MakeSubscription.Content = $"Оформить подписку с {calendarSelectedDate.ToString("d")}";
 		}
 	}
 }
