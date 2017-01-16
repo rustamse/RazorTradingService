@@ -2,6 +2,15 @@
 
 namespace RazorCore.Subscription
 {
+	public class SubscriptionPlanDublicateDeliveryDay : Exception
+	{
+		public SubscriptionPlanDublicateDeliveryDay(string msg)
+			: base(msg)
+		{
+
+		}
+	}
+
 	public class SubscriptionPlan
 	{
 		public readonly SubscriptionTypes SubscriptionType;
@@ -44,7 +53,7 @@ namespace RazorCore.Subscription
 					CheckDeliverDayNumber(deliveryDay1);
 
 					if (deliveryDay0 == deliveryDay1)
-						throw new ArgumentOutOfRangeException(nameof(DeliveryTime), "Должно быть выбрано два различных дня доставки для (DeliveryRegularity.TwicePerMonth).");
+						throw new SubscriptionPlanDublicateDeliveryDay("Должно быть выбрано два различных дня доставки для (DeliveryRegularity.TwicePerMonth).");
 
 					break;
 			}

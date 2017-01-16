@@ -56,11 +56,18 @@ namespace RazorWpf
 
 		private void OnMakeSubscriptionClick(object sender, RoutedEventArgs e)
 		{
-			var subscriptionPlan = ParseSubscriptionPlan();
+			try
+			{
+				var subscriptionPlan = ParseSubscriptionPlan();
 
-			_cashController.AddOrUpdateSubscriptionPlan(subscriptionPlan);
+				_cashController.AddOrUpdateSubscriptionPlan(subscriptionPlan);
 
-			Update();
+				Update();
+			}
+			catch (SubscriptionPlanDublicateDeliveryDay ex)
+			{
+				MessageBox.Show(ex.Message, "Неверно выбраны дни доставки.");
+			}
 		}
 
 		private void Update()
@@ -104,7 +111,7 @@ namespace RazorWpf
 			foreach (var historyItem in _cashController.GetSubscriptionHistory())
 			{
 				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
-				                            $"Тип: {historyItem.SubscriptionPlan.SubscriptionType}, " +
+											$"Тип: {historyItem.SubscriptionPlan.SubscriptionType}, " +
 											$"Доставка: {historyItem.SubscriptionPlan.DeliveryRegularity}, " +
 											$"{historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.LastOrDefault()}");
 			}

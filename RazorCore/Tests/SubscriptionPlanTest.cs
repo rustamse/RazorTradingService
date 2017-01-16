@@ -128,7 +128,7 @@ namespace RazorCore.Tests
 		[Test]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsTwoSameDays_ThorwsArgumentOutOfRange()
 		{
-			Assert.Throws<ArgumentOutOfRangeException>(() =>
+			Assert.Throws<SubscriptionPlanDublicateDeliveryDay>(() =>
 			{
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
