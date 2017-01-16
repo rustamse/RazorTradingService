@@ -68,83 +68,72 @@ namespace RazorCore.Tests
 			});
 		}
 
-		[Test(Description = "Время доставики должно быть задано обязательно (не ноль)")]
-		public void Ctor_WhenRegularityOncePerMonthAndDeliveryContainsNull_ThorwsArgumentNull()
-		{
-			Assert.Throws<ArgumentNullException>(() =>
-			{
-				// ReSharper disable once UnusedVariable
-				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(null));
-			});
-		}
-
-		[Test]
-		public void Ctor_WhenRegularityOncePerMonthAndDeliveryTooSmallDayNumber_ThorwsArgumentOutOfRange()
+		[Test(Description = "Дата доставки должна быть числом более 0")]
+		public void Ctor_WhenDeliveryTooSmallDayNumber_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() =>
 			{
+				var tooSmallDeliveryDay = 0;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(0));
+					DeliveryRegularity.OncePerMonth, new DeliveryTime(tooSmallDeliveryDay));
 			});
 		}
 
-		[Test]
-		public void Ctor_WhenRegularityOncePerMonthAndDeliveryTooBigDayNumber_ThorwsArgumentOutOfRange()
+		[Test(Description = "Дата доставки должна быть числом менее 29")]
+		public void Ctor_WhenDeliveryTooBigDayNumber_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() =>
 			{
+				var tooBigDeliveryDay = 29;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(29));
+					DeliveryRegularity.OncePerMonth, new DeliveryTime(tooBigDeliveryDay));
 			});
 		}
 
-		[Test]
-		public void Ctor_WhenRegularityOncePerMonthAndDeliveryContainsTwoDays_ThorwsArgumentOutOfRange()
-		{
-			Assert.Throws<ArgumentOutOfRangeException>(() =>
-			{
-				// ReSharper disable once UnusedVariable
-				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(1, 2));
-			});
-		}
-
-		[Test]
+		[Test(Description = "Для доставки с регулярностью дважды в месяц нельзя задать только 1 день доставки")]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsOneDay_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() =>
 			{
+				var singleDeliveryDay = 1;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.TwicePerMonth, new DeliveryTime(1));
+					DeliveryRegularity.TwicePerMonth, new DeliveryTime(singleDeliveryDay));
 			});
 		}
 
 		[Test]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsTwoDifferentDays_SuccessCreation()
 		{
+			var firstDeliveryDay = 1;
+			var secondDeliveryDay = 2;
+
 			// ReSharper disable once UnusedVariable
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-				DeliveryRegularity.TwicePerMonth, new DeliveryTime(1, 2));
+				DeliveryRegularity.TwicePerMonth, new DeliveryTime(firstDeliveryDay, secondDeliveryDay));
 
 			Assert.Pass();
 		}
 
-		[Test]
+		[Test(Description = "При доставке дважды в месяц нельзя чтобы оба дня доставки были одинаковыми")]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsTwoSameDays_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<SubscriptionPlanDublicateDeliveryDay>(() =>
 			{
+				var bothDeliveryDays = 1;
+
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.TwicePerMonth, new DeliveryTime(1, 1));
+					DeliveryRegularity.TwicePerMonth, new DeliveryTime(bothDeliveryDays, bothDeliveryDays));
 			});
 		}
 
-		[Test]
+		[Test(Description = "Когда доставляем дважды в месяц нельзя чтобы было выбрано 3 дня доставки")]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsThreeDays_ThorwsArgumentOutOfRange()
 		{
 			Assert.Throws<ArgumentOutOfRangeException>(() =>
