@@ -2,15 +2,6 @@
 
 namespace RazorCore.Subscription
 {
-	public class SubscriptionPlanDublicateDeliveryDay : Exception
-	{
-		public SubscriptionPlanDublicateDeliveryDay(string msg)
-			: base(msg)
-		{
-
-		}
-	}
-
 	public class SubscriptionPlan
 	{
 		public readonly SubscriptionTypes SubscriptionType;
