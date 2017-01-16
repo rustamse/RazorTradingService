@@ -6,4 +6,4 @@ install:
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release ./RazorCore/MonoRazorCore.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./RazorCore/bin/Release/MonoRazorCore.dll
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./RazorCore/bin/Release/RazorCore.dll
