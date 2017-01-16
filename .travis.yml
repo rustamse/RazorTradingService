@@ -1,8 +1,9 @@
 language: csharp
-solution: RazorCore/MonoRazorCore.sln
-before_install:
-  - sudo apt-get install nunit-console
-before_script:
-  - nuget restore RazorCore/MonoRazorCore.sln
-after_script:
-  - nunit-console RazorCore/bin/Release/MonoRazorCore.dll
+solution: ./RazorCore/MonoRazorCore.sln
+
+install:
+  - nuget restore ./RazorCore/MonoRazorCore.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release ./RazorCore/MonoRazorCore.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./RazorCore/bin/Release/MonoRazorCore.dll
