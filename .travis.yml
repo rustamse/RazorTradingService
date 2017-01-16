@@ -1,0 +1,8 @@
+language: csharp
+solution: RazorCore/RazorCore.sln
+before_install:
+  - sudo apt-get install nunit-console
+before_script:
+  - nuget restore RazorCore/RazorCore.sln
+after_script:
+  - nunit-console RazorCore/bin/Debug/RazorCore.dll
