@@ -12,9 +12,9 @@ namespace RazorCore.Tests
 		[Test]
 		public void CalculateTotalCash_WhenEmptyHistory_Returns0()
 		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create().Build();
+			var priceList = PriceListBuilder.Create().Build();
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
@@ -24,33 +24,20 @@ namespace RazorCore.Tests
 		[Test]
 		public void CalculateTotalCash_WhenHistoryHasOneDelivery_ReturnsCostOfOneDelivery()
 		{
-			var cashCalculator = InitCashCalculatorWhenHistoryHasOneDelivery();
+			var gelPricePerOneDelivery = 1;
+
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
+				.WithInterval("1 jan 2017", "1 feb 2017", SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth, 10)
+				.Build();
+			var priceList = PriceListBuilder.Create()
+				.WithPrice(SubscriptionTypes.Razor, gelPricePerOneDelivery)
+				.Build();
+
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
-			Assert.AreEqual(1, resultCash);
-		}
-
-		private static CashCalculator InitCashCalculatorWhenHistoryHasOneDelivery()
-		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
-				.Returns(() =>
-				{
-					var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.OncePerMonth, new DeliveryTime(10));
-					var cashIntervals = new List<CashInterval>
-					{
-						new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate("1 jan 2017"),
-							Helper.GenerateSubscrDate("1 feb 2017"))
-					};
-					return cashIntervals;
-				});
-			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
-				.Returns(1);
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			return cashCalculator;
+			Assert.AreEqual(gelPricePerOneDelivery, resultCash);
 		}
 
 		[Test(Description = "Когда у нас 2 достаки по 1 доллару + 1 доставка по 9 долларов, " +
