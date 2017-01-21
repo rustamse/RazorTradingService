@@ -28,7 +28,7 @@ namespace RazorCore.Tests
 			SubscriptionTypes subscriptionType, DeliveryRegularity deliveryRegularity, params int[] deliveryDays)
 		{
 			var subscriptionPlan = new SubscriptionPlan(subscriptionType,
-				deliveryRegularity, new DeliveryTime(deliveryDays));
+				new DeliveryTime(deliveryRegularity, deliveryDays));
 			var cashInterval = new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate(fromDate),
 				Helper.GenerateSubscrDate(toDate));
 			_intervals.Add(cashInterval);

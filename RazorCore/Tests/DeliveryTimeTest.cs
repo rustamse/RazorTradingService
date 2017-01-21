@@ -17,7 +17,7 @@ namespace RazorCore.Tests
 
 				// ReSharper disable once UnusedVariable
 				// ReSharper disable once ExpressionIsAlwaysNull
-				var deliveryTime = new DeliveryTime(deliveryDays);
+				var deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerMonth, deliveryDays);
 			});
 		}
 
@@ -26,7 +26,7 @@ namespace RazorCore.Tests
 		{
 			var day = 1;
 
-			var deliveryTime = new DeliveryTime(day);
+			var deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerMonth, day);
 
 			Assert.AreEqual(day, deliveryTime.DeliveryDays.Single());
 		}
@@ -36,7 +36,7 @@ namespace RazorCore.Tests
 		{
 			var day = new[] { 1, 2 };
 
-			var deliveryTime = new DeliveryTime(day);
+			var deliveryTime = new DeliveryTime(DeliveryRegularity.TwicePerMonth, day);
 
 			Assert.AreEqual(day.First(), deliveryTime.DeliveryDays.First());
 			Assert.AreEqual(day.Last(), deliveryTime.DeliveryDays.Last());

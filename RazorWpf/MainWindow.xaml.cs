@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using RazorCore.Cash;
 using RazorCore.Subscription;
 
 namespace RazorWpf
@@ -64,7 +63,7 @@ namespace RazorWpf
 
 				Update();
 			}
-			catch (SubscriptionPlanDublicateDeliveryDay ex)
+			catch (SubscriptionPlanDublicateDeliveryDayException ex)
 			{
 				MessageBox.Show(ex.Message, "Неверно выбраны дни доставки.");
 			}
@@ -112,7 +111,7 @@ namespace RazorWpf
 			{
 				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
 											$"Тип: {historyItem.SubscriptionPlan.SubscriptionType}, " +
-											$"Доставка: {historyItem.SubscriptionPlan.DeliveryRegularity}, " +
+											$"Доставка: {historyItem.SubscriptionPlan.DeliveryTime.DeliveryRegularity}, " +
 											$"{historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.LastOrDefault()}");
 			}
 		}
@@ -138,28 +137,23 @@ namespace RazorWpf
 
 			if (DeliveryOncePer2MonthsCheckBox.IsChecked == true)
 			{
-				deliveryRegularity = DeliveryRegularity.OncePerTwoMonths;
-				deliveryTime = new DeliveryTime(DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+				deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryOncePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryRegularity = DeliveryRegularity.OncePerMonth;
-				deliveryTime = new DeliveryTime(DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+				deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryRegularity = DeliveryRegularity.TwicePerMonth;
-				deliveryTime = new DeliveryTime(DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
+				deliveryTime = new DeliveryTime(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
 					DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
 			}
 			else
 			{
-				deliveryRegularity = DeliveryRegularity.Suspended;
-				deliveryTime = new DeliveryTime(1);
+				deliveryTime = new DeliveryTime(DeliveryRegularity.Suspended, 1);
 			}
 
-			var subscriptionPlan = new SubscriptionPlan(subscriptionType, deliveryRegularity,
-				deliveryTime);
+			var subscriptionPlan = new SubscriptionPlan(subscriptionType, deliveryTime);
 			return subscriptionPlan;
 		}
 	}

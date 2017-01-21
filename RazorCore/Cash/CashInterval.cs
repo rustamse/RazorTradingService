@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using RazorCore.Subscription;
 
 namespace RazorCore.Cash
@@ -30,16 +29,10 @@ namespace RazorCore.Cash
 			var deliveryDates = new List<DateTime>();
 			while (checkDate <= ToDate)
 			{
-				if (SubscriptionPlan.DeliveryRegularity == DeliveryRegularity.Suspended)
-					break;
+				var isDeliveryDay = SubscriptionPlan.DeliveryTime.IsDeliveryDay(checkDate);
 
-				var isDeliveryDay = SubscriptionPlan.DeliveryTime.DeliveryDays.ToList().Contains(checkDate.Day);
-				var isDeliveryMonth = SubscriptionPlan.DeliveryRegularity != DeliveryRegularity.OncePerTwoMonths ||
-									  (FromDate.Month - checkDate.Month) % 2 == 0;
-				if (isDeliveryDay && isDeliveryMonth)
-				{
+				if (isDeliveryDay)
 					deliveryDates.Add(checkDate);
-				}
 
 				checkDate = checkDate.AddDays(1);
 			}

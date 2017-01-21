@@ -8,7 +8,7 @@ namespace RazorCore.Tests
 	{
 		public static SubscriptionPlan GenerateStdSubscrPlan()
 		{
-			return new SubscriptionPlan(SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth, new DeliveryTime(1));
+			return new SubscriptionPlan(SubscriptionTypes.Razor, new DeliveryTime(DeliveryRegularity.OncePerMonth, 1));
 		}
 
 		public static DateTime GenerateSubscrDate(string date)

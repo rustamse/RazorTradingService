@@ -13,7 +13,7 @@ namespace RazorCore.Tests
 			var deliveryDay = 1;
 
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-				DeliveryRegularity.OncePerMonth, new DeliveryTime(deliveryDay));
+				 new DeliveryTime(DeliveryRegularity.OncePerMonth, deliveryDay));
 
 			Assert.AreEqual(deliveryDay, subscriptionPlan.DeliveryTime.DeliveryDays[0]);
 		}
@@ -24,9 +24,9 @@ namespace RazorCore.Tests
 			var regularity = DeliveryRegularity.OncePerTwoMonths;
 
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-				regularity, new DeliveryTime(1));
+				new DeliveryTime(regularity, 1));
 
-			Assert.AreEqual(regularity, subscriptionPlan.DeliveryRegularity);
+			Assert.AreEqual(regularity, subscriptionPlan.DeliveryTime.DeliveryRegularity);
 		}
 
 		[Test]
@@ -35,7 +35,7 @@ namespace RazorCore.Tests
 			var razorAndGel = SubscriptionTypes.RazorAndGel;
 
 			var subscriptionPlan = new SubscriptionPlan(razorAndGel,
-				DeliveryRegularity.OncePerMonth, new DeliveryTime(1));
+				new DeliveryTime(DeliveryRegularity.OncePerMonth, 1));
 
 			Assert.AreEqual(razorAndGel, subscriptionPlan.SubscriptionType);
 		}
@@ -50,7 +50,7 @@ namespace RazorCore.Tests
 
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(firstDeliveryDay, secondDeliveryDay));
+					new DeliveryTime(DeliveryRegularity.OncePerMonth, firstDeliveryDay, secondDeliveryDay));
 			});
 		}
 
@@ -64,7 +64,7 @@ namespace RazorCore.Tests
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
 					// ReSharper disable once ExpressionIsAlwaysNull
-					DeliveryRegularity.OncePerMonth, nullableDeliveryTime);
+					nullableDeliveryTime);
 			});
 		}
 
@@ -77,7 +77,7 @@ namespace RazorCore.Tests
 
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(tooSmallDeliveryDay));
+					new DeliveryTime(DeliveryRegularity.OncePerMonth, tooSmallDeliveryDay));
 			});
 		}
 
@@ -90,7 +90,7 @@ namespace RazorCore.Tests
 
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.OncePerMonth, new DeliveryTime(tooBigDeliveryDay));
+					new DeliveryTime(DeliveryRegularity.OncePerMonth, tooBigDeliveryDay));
 			});
 		}
 
@@ -103,7 +103,7 @@ namespace RazorCore.Tests
 
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.TwicePerMonth, new DeliveryTime(singleDeliveryDay));
+					 new DeliveryTime(DeliveryRegularity.TwicePerMonth, singleDeliveryDay));
 			});
 		}
 
@@ -115,7 +115,7 @@ namespace RazorCore.Tests
 
 			// ReSharper disable once UnusedVariable
 			var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-				DeliveryRegularity.TwicePerMonth, new DeliveryTime(firstDeliveryDay, secondDeliveryDay));
+				 new DeliveryTime(DeliveryRegularity.TwicePerMonth, firstDeliveryDay, secondDeliveryDay));
 
 			Assert.Pass();
 		}
@@ -123,13 +123,13 @@ namespace RazorCore.Tests
 		[Test(Description = "При доставке дважды в месяц нельзя чтобы оба дня доставки были одинаковыми")]
 		public void Ctor_WhenRegularityTwicePerMonthAndDeliveryContainsTwoSameDays_ThorwsArgumentOutOfRange()
 		{
-			Assert.Throws<SubscriptionPlanDublicateDeliveryDay>(() =>
+			Assert.Throws<SubscriptionPlanDublicateDeliveryDayException>(() =>
 			{
 				var bothDeliveryDays = 1;
 
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.TwicePerMonth, new DeliveryTime(bothDeliveryDays, bothDeliveryDays));
+					 new DeliveryTime(DeliveryRegularity.TwicePerMonth, bothDeliveryDays, bothDeliveryDays));
 			});
 		}
 
@@ -140,7 +140,7 @@ namespace RazorCore.Tests
 			{
 				// ReSharper disable once UnusedVariable
 				var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-					DeliveryRegularity.TwicePerMonth, new DeliveryTime(1, 2, 3));
+					new DeliveryTime(DeliveryRegularity.TwicePerMonth, 1, 2, 3));
 			});
 		}
 	}
