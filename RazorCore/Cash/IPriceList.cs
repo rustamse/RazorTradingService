@@ -1,4 +1,4 @@
-using RazorCore.Subscription;
+﻿using RazorCore.Subscription;
 
 namespace RazorCore.Cash
 {

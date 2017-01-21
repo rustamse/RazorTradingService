@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
@@ -11,8 +11,8 @@ namespace RazorCore.Tests
 	[TestFixture]
 	public class CashIntervalsProviderTest
 	{
-		[Test(Description = "Когда история из 1 элемента и дата построения после, то" +
-							"Возвращает единственный интервал (от начала истории и до времени расчета)")]
+		[Test(Description = "РљРѕРіРґР° РёСЃС‚РѕСЂРёСЏ РёР· 1 СЌР»РµРјРµРЅС‚Р° Рё РґР°С‚Р° РїРѕСЃС‚СЂРѕРµРЅРёСЏ РїРѕСЃР»Рµ, С‚Рѕ" +
+							"Р’РѕР·РІСЂР°С‰Р°РµС‚ РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ РёРЅС‚РµСЂРІР°Р» (РѕС‚ РЅР°С‡Р°Р»Р° РёСЃС‚РѕСЂРёРё Рё РґРѕ РІСЂРµРјРµРЅРё СЂР°СЃС‡РµС‚Р°)")]
 		public void GetIntervals_WhenHasHistoryAndCashDateAfter_ReturnsOneInterval()
 		{
 			var historyStartJan1 = Helper.GenerateSubscrDate("1 jan 2017");
@@ -38,8 +38,8 @@ namespace RazorCore.Tests
 			return history.Object;
 		}
 
-		[Test(Description = "Когда история из 1 элемента и дата построения до, то" +
-							"Не  возвращает интервалов")]
+		[Test(Description = "РљРѕРіРґР° РёСЃС‚РѕСЂРёСЏ РёР· 1 СЌР»РµРјРµРЅС‚Р° Рё РґР°С‚Р° РїРѕСЃС‚СЂРѕРµРЅРёСЏ РґРѕ, С‚Рѕ" +
+							"РќРµ  РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅС‚РµСЂРІР°Р»РѕРІ")]
 		public void GetIntervals_WhenHasHistoryAndCashDateBeforeHistory_ReturnsNoIntervals()
 		{
 			var historyStartJan1 = Helper.GenerateSubscrDate("1 jan 2017");
@@ -52,7 +52,7 @@ namespace RazorCore.Tests
 			Assert.False(cashIntervals.Any());
 		}
 
-		[Test(Description = "Когда нет истории, то нет и результирующих интервалов.")]
+		[Test(Description = "РљРѕРіРґР° РЅРµС‚ РёСЃС‚РѕСЂРёРё, С‚Рѕ РЅРµС‚ Рё СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёС… РёРЅС‚РµСЂРІР°Р»РѕРІ.")]
 		public void GetIntervals_WhenEmptyHistory_ReturnsNoIntervals()
 		{
 			var cashDateJan15 = Helper.GenerateSubscrDate("1 dec 2016");
@@ -72,8 +72,8 @@ namespace RazorCore.Tests
 			return history.Object;
 		}
 
-		[Test(Description = "Когда история за 2016,2017,2018 год, а дата расчета 2017 год, " +
-							"то результирующий интервал содержит только 2016 и 2017 год (до момента даты расчета)")]
+		[Test(Description = "РљРѕРіРґР° РёСЃС‚РѕСЂРёСЏ Р·Р° 2016,2017,2018 РіРѕРґ, Р° РґР°С‚Р° СЂР°СЃС‡РµС‚Р° 2017 РіРѕРґ, " +
+							"С‚Рѕ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РёРЅС‚РµСЂРІР°Р» СЃРѕРґРµСЂР¶РёС‚ С‚РѕР»СЊРєРѕ 2016 Рё 2017 РіРѕРґ (РґРѕ РјРѕРјРµРЅС‚Р° РґР°С‚С‹ СЂР°СЃС‡РµС‚Р°)")]
 		public void GetIntervals_WhenHistoryLongerThanCashDate_ReturnsIntervalsFromStartHistoryToCashDate()
 		{
 			var cashDateJan15 = Helper.GenerateSubscrDate("15 jan 2017");

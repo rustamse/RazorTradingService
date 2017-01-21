@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using Moq;
-using NUnit.Framework;
+п»їusing NUnit.Framework;
 using RazorCore.Cash;
 using RazorCore.Subscription;
 
@@ -24,166 +22,97 @@ namespace RazorCore.Tests
 		[Test]
 		public void CalculateTotalCash_WhenHistoryHasOneDelivery_ReturnsCostOfOneDelivery()
 		{
-			var gelPricePerOneDelivery = 1;
+			var razorPricePerOneDelivery = 1;
 
 			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
 				.WithInterval("1 jan 2017", "1 feb 2017", SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth, 10)
 				.Build();
 			var priceList = PriceListBuilder.Create()
-				.WithPrice(SubscriptionTypes.Razor, gelPricePerOneDelivery)
+				.WithPrice(SubscriptionTypes.Razor, razorPricePerOneDelivery)
 				.Build();
 
 			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
-			Assert.AreEqual(gelPricePerOneDelivery, resultCash);
+			Assert.AreEqual(razorPricePerOneDelivery, resultCash);
 		}
 
-		[Test(Description = "Когда у нас 2 достаки по 1 доллару + 1 доставка по 9 долларов, " +
-							"то общая стоимость получается 1+1+9")]
+		[Test]
 		public void CalculateTotalCash_WhenHistoryHasFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery_ReturnsCostOfThreeDelivery()
 		{
-			var cashCalculator = InitCashCalculatorWithFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery();
+			var razorPricePerOneMonth = 1;
+			var razorAndGelPricePerOnemonth = 9;
+
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
+				.WithInterval("1 jan 2017", "1 mar 2017", SubscriptionTypes.Razor, DeliveryRegularity.OncePerMonth, 10)
+				.WithInterval("2 mar 2017", "1 apr 2017", SubscriptionTypes.RazorAndGel, DeliveryRegularity.OncePerMonth, 5)
+				.Build();
+			var priceList = PriceListBuilder.Create()
+				.WithPrice(SubscriptionTypes.Razor, razorPricePerOneMonth)
+				.WithPrice(SubscriptionTypes.RazorAndGel, razorAndGelPricePerOnemonth)
+				.Build();
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
-			Assert.AreEqual(1 + 1 + 9, resultCash);
+			Assert.AreEqual(2 * razorPricePerOneMonth + razorAndGelPricePerOnemonth, resultCash);
 		}
 
-		private static CashCalculator InitCashCalculatorWithFirstItemWith2DeliveryAndSecondItemWithOtherOneDelivery()
-		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
-				.Returns(() =>
-				{
-					var firstSubscrPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.OncePerMonth, new DeliveryTime(10));
-					var secondSubscrPlan = new SubscriptionPlan(SubscriptionTypes.RazorAndGel,
-						DeliveryRegularity.OncePerMonth, new DeliveryTime(5));
-					var cashIntervals = new List<CashInterval>
-					{
-						new CashInterval(firstSubscrPlan, Helper.GenerateSubscrDate("1 jan 2017"), Helper.GenerateSubscrDate("1 mar 2017")),
-						new CashInterval(secondSubscrPlan, Helper.GenerateSubscrDate("2 mar 2017"), Helper.GenerateSubscrDate("1 apr 2017"))
-					};
-					return cashIntervals;
-				});
-			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
-				.Returns<SubscriptionTypes>(sType =>
-				{
-					if (sType == SubscriptionTypes.RazorAndGel)
-						return 9;
-					return 1;
-				});
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			return cashCalculator;
-		}
-
-		[Test(Description = "При доставке раз в 2 месяца за год получается 6 доставок по 1 доллару")]
+		[Test]
 		public void CalculateTotalCash_WhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths_ReturnsCostOfSixDelivery()
 		{
-			var cashCalculator = InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths();
+			var razorAndGelAndFoamPricePerOnemonth = 19;
+
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
+				.WithInterval("1 jan 2017", "1 jan 2018", SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.OncePerTwoMonths, 2)
+				.Build();
+			var priceList = PriceListBuilder.Create()
+				.WithPrice(SubscriptionTypes.RazorAndGelAndFoam, razorAndGelAndFoamPricePerOnemonth)
+				.Build();
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
-			Assert.AreEqual(1 * 6, resultCash);
+			Assert.AreEqual(6 * razorAndGelAndFoamPricePerOnemonth, resultCash);
 		}
 
-		private static CashCalculator InitCashCalculatorWhenHistoryHasOneYearAndHasDeliveryOncePerTwoMonths()
-		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
-				.Returns(() =>
-				{
-					var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.OncePerTwoMonths, new DeliveryTime(10));
-					var cashIntervals = new List<CashInterval>
-					{
-						new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate("1 jan 2017"),
-							Helper.GenerateSubscrDate("1 jan 2018"))
-					};
-					return cashIntervals;
-				});
-			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
-				.Returns(1);
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			return cashCalculator;
-		}
-
-		[Test(Description = "Если подписка приостановлена постоянно, то стоимость нулевая.")]
+		[Test]
 		public void CalculateTotalCash_WhenDeliverySuspended_ReturnsZeroCost()
 		{
-			var cashCalculator = InitCashCalculatorWhenDeliverySuspended();
+			var razorAndGelAndFoamPricePerOnemonth = 19;
+
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
+				.WithInterval("1 jan 2017", "1 jan 2018", SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.Suspended, 2)
+				.Build();
+			var priceList = PriceListBuilder.Create()
+				.WithPrice(SubscriptionTypes.RazorAndGelAndFoam, razorAndGelAndFoamPricePerOnemonth)
+				.Build();
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
 			Assert.AreEqual(0, resultCash);
 		}
 
-		private static CashCalculator InitCashCalculatorWhenDeliverySuspended()
+		[Test]
+		public void CalculateTotalCash_WhenDeliverySuspendAfterPresentAfterSuspended_ReturnsOneDeliveryCost()
 		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
-				.Returns(() =>
-				{
-					var subscriptionPlan = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.Suspended, new DeliveryTime(10));
-					var cashIntervals = new List<CashInterval>
-					{
-						new CashInterval(subscriptionPlan, Helper.GenerateSubscrDate("1 jan 2017"),
-							Helper.GenerateSubscrDate("1 jan 2018"))
-					};
-					return cashIntervals;
-				});
-			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
-				.Returns(1);
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			return cashCalculator;
-		}
+			var razorAndGelAndFoamPricePerOnemonth = 19;
 
-		[Test(Description = "Если подписка приостановлена постоянно, " +
-							"потом была, потом снова приостановлена, " +
-							"то стоимость будет равна одной доставке.")]
-		public void CalculateTotalCash_WhenDeliveryPresentAfterSuspendedAfterSuspend_ReturnsOneDeliveryCost()
-		{
-			var cashCalculator = InitCashCalculatorWhenDeliveryPresentAfterSuspendedAfterSuspend();
+			var cashIntervalsProvider = CashIntervalsProviderBuilder.Create()
+				.WithInterval("1 jan 2017", "1 feb 2017", SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.Suspended, 15)
+				.WithInterval("2 feb 2017", "1 mar 2017", SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.OncePerMonth, 16)
+				.WithInterval("2 mar 2017", "1 apr 2017", SubscriptionTypes.RazorAndGelAndFoam, DeliveryRegularity.Suspended, 18)
+				.Build();
+			var priceList = PriceListBuilder.Create()
+				.WithPrice(SubscriptionTypes.RazorAndGelAndFoam, razorAndGelAndFoamPricePerOnemonth)
+				.Build();
+			var cashCalculator = new CashCalculator(cashIntervalsProvider, priceList);
 
 			var resultCash = cashCalculator.CalculateTotalCash();
 
-			Assert.AreEqual(1, resultCash);
-		}
-
-		private static CashCalculator InitCashCalculatorWhenDeliveryPresentAfterSuspendedAfterSuspend()
-		{
-			var history = new Mock<ICashIntervalsProvider>();
-			var priceList = new Mock<IPriceList>();
-			history.Setup(subscriptionHistory => subscriptionHistory.GetIntervals())
-				.Returns(() =>
-				{
-					var suspendedPlan1 = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.Suspended, new DeliveryTime(10));
-					var activePlan2 = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.OncePerMonth, new DeliveryTime(10));
-					var suspendedPlan3 = new SubscriptionPlan(SubscriptionTypes.Razor,
-						DeliveryRegularity.Suspended, new DeliveryTime(10));
-					var cashIntervals = new List<CashInterval>
-					{
-						new CashInterval(suspendedPlan1, Helper.GenerateSubscrDate("1 jan 2017"),
-							Helper.GenerateSubscrDate("1 feb 2017")),
-						new CashInterval(activePlan2, Helper.GenerateSubscrDate("2 feb 2017"),
-							Helper.GenerateSubscrDate("1 mar 2017")),
-						new CashInterval(suspendedPlan3, Helper.GenerateSubscrDate("2 mar 2017"),
-							Helper.GenerateSubscrDate("1 apr 2017"))
-					};
-					return cashIntervals;
-				});
-			priceList.Setup(list => list.GetPrice(It.IsAny<SubscriptionTypes>()))
-				.Returns(1);
-			var cashCalculator = new CashCalculator(history.Object, priceList.Object);
-			return cashCalculator;
+			Assert.AreEqual(1 * razorAndGelAndFoamPricePerOnemonth, resultCash);
 		}
 	}
 }

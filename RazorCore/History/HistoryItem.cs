@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using RazorCore.Subscription;
 
 namespace RazorCore.History

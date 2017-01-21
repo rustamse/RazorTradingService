@@ -1,4 +1,4 @@
-using System.Linq;
+п»їusing System.Linq;
 using NUnit.Framework;
 using RazorCore.History;
 
@@ -41,8 +41,8 @@ namespace RazorCore.Tests
 			Assert.AreEqual(2, subscriptionHistory.GetHistory().Count());
 		}
 
-		[Test(Description = "Проверка сортировки по времени: при добавлении элемента " +
-		                    "с большим временем этот элемент оказывается в конце")]
+		[Test(Description = "РџСЂРѕРІРµСЂРєР° СЃРѕСЂС‚РёСЂРѕРІРєРё РїРѕ РІСЂРµРјРµРЅРё: РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СЌР»РµРјРµРЅС‚Р° " +
+		                    "СЃ Р±РѕР»СЊС€РёРј РІСЂРµРјРµРЅРµРј СЌС‚РѕС‚ СЌР»РµРјРµРЅС‚ РѕРєР°Р·С‹РІР°РµС‚СЃСЏ РІ РєРѕРЅС†Рµ")]
 		public void GetHistory_WhenAddSecondWithBiggerDate_ReturnsAddedSubscriptionLastInHistory()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
@@ -55,8 +55,8 @@ namespace RazorCore.Tests
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().Last().FromDate);
 		}
 
-		[Test(Description = "Проверка сортировки по времени: при добавлении элемента " +
-		                    "с меньшим временем этот элемент оказывается в начале")]
+		[Test(Description = "РџСЂРѕРІРµСЂРєР° СЃРѕСЂС‚РёСЂРѕРІРєРё РїРѕ РІСЂРµРјРµРЅРё: РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СЌР»РµРјРµРЅС‚Р° " +
+		                    "СЃ РјРµРЅСЊС€РёРј РІСЂРµРјРµРЅРµРј СЌС‚РѕС‚ СЌР»РµРјРµРЅС‚ РѕРєР°Р·С‹РІР°РµС‚СЃСЏ РІ РЅР°С‡Р°Р»Рµ")]
 		public void GetHistory_WhenAddSecondWithSmallerDate_ReturnsAddedSubscriptionFirstInHistory()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
@@ -69,8 +69,8 @@ namespace RazorCore.Tests
 			Assert.AreEqual(addedDate, subscriptionHistory.GetHistory().First().FromDate);
 		}
 
-		[Test(Description = "Проверяем перезатирание истории при добавлении элемета " +
-		                    "со временем равным уже времени существующего элемента")]
+		[Test(Description = "РџСЂРѕРІРµСЂСЏРµРј РїРµСЂРµР·Р°С‚РёСЂР°РЅРёРµ РёСЃС‚РѕСЂРёРё РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё СЌР»РµРјРµС‚Р° " +
+		                    "СЃРѕ РІСЂРµРјРµРЅРµРј СЂР°РІРЅС‹Рј СѓР¶Рµ РІСЂРµРјРµРЅРё СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°")]
 		public void GetHistory_WhenAddSecondWithTheSameDate_ReturnsOneItemHistoryWhichEqualsToAdded()
 		{
 			var initialDate = Helper.GenerateSubscrDate("15 jan 2017");
