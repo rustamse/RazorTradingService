@@ -1,35 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using RazorCore.Subscription;
 
 namespace RazorCore.History
 {
 	public class SubscriptionHistory : ISubscriptionHistory
 	{
-		private readonly List<HistoryItem> _historyItems = new List<HistoryItem>();
+		private readonly List<ISubscriptionInterval> _historyItems = new List<ISubscriptionInterval>();
 
-		public void AddSubscrption(SubscriptionPlan subscriptionPlan, DateTime fromTime)
+		public void AddSubscrption(IProductInfo productInfo, IDeliveryInfo deliveryInfo,
+			DateTime fromDate, DateTime toDate)
 		{
-			if (subscriptionPlan == null)
-				throw new ArgumentNullException(nameof(subscriptionPlan));
+			if (productInfo == null)
+				throw new ArgumentNullException(nameof(productInfo));
+			if (deliveryInfo == null)
+				throw new ArgumentNullException(nameof(deliveryInfo));
 
-			var newItemDate = fromTime.Date;
-
-			RemoveItemWithTheSameDate(newItemDate);
-
-			_historyItems.Add(new HistoryItem(subscriptionPlan, newItemDate));
+			var subscriptionInterval = new SubscriptionInterval(productInfo, deliveryInfo,
+				fromDate.Date, toDate.Date);
+			_historyItems.Add(subscriptionInterval);
 
 			SortHistoryItemsByAsc();
 		}
 
-		public IEnumerable<HistoryItem> GetHistory()
+		public ReadOnlyCollection<ISubscriptionInterval> GetHistory()
 		{
-			return _historyItems;
-		}
-
-		private void RemoveItemWithTheSameDate(DateTime date)
-		{
-			_historyItems.RemoveAll(item => item.FromDate == date);
+			return new ReadOnlyCollection<ISubscriptionInterval>(_historyItems);
 		}
 
 		private void SortHistoryItemsByAsc()

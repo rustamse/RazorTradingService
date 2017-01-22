@@ -65,14 +65,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CalendarBackground.cs" />
-    <Compile Include="CashController.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PriceList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

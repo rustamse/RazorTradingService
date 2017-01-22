@@ -110,50 +110,50 @@ namespace RazorWpf
 			foreach (var historyItem in _cashController.GetSubscriptionHistory())
 			{
 				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
-											$"Тип: {historyItem.SubscriptionPlan.SubscriptionType}, " +
-											$"Доставка: {historyItem.SubscriptionPlan.DeliveryTime.DeliveryRegularity}, " +
-											$"{historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryTime.DeliveryDays.LastOrDefault()}");
+											$"Тип: {historyItem.SubscriptionPlan.ProductType}, " +
+											$"Доставка: {historyItem.SubscriptionPlan.DeliveryInfo.DeliveryRegularity}, " +
+											$"{historyItem.SubscriptionPlan.DeliveryInfo.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryInfo.DeliveryDays.LastOrDefault()}");
 			}
 		}
 
 		private SubscriptionPlan ParseSubscriptionPlan()
 		{
-			SubscriptionTypes subscriptionType;
+			ProductTypes productType;
 			DeliveryRegularity deliveryRegularity;
-			DeliveryTime deliveryTime;
+			DeliveryInfo deliveryInfo;
 
 			if (RazorAndGelCheckBox.IsChecked == true)
 			{
-				subscriptionType = SubscriptionTypes.RazorAndGel;
+				productType = ProductTypes.RazorAndGel;
 			}
 			else if (RazorAndGelAndFoamCheckBox.IsChecked == true)
 			{
-				subscriptionType = SubscriptionTypes.RazorAndGelAndFoam;
+				productType = ProductTypes.RazorAndGelAndFoam;
 			}
 			else
 			{
-				subscriptionType = SubscriptionTypes.Razor;
+				productType = ProductTypes.Razor;
 			}
 
 			if (DeliveryOncePer2MonthsCheckBox.IsChecked == true)
 			{
-				deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+				deliveryInfo = new DeliveryInfo(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryOncePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryTime = new DeliveryTime(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+				deliveryInfo = new DeliveryInfo(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryTime = new DeliveryTime(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
+				deliveryInfo = new DeliveryInfo(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
 					DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
 			}
 			else
 			{
-				deliveryTime = new DeliveryTime(DeliveryRegularity.Suspended, 1);
+				deliveryInfo = new DeliveryInfo(DeliveryRegularity.Suspended, 1);
 			}
 
-			var subscriptionPlan = new SubscriptionPlan(subscriptionType, deliveryTime);
+			var subscriptionPlan = new SubscriptionPlan(productType, deliveryInfo);
 			return subscriptionPlan;
 		}
 	}

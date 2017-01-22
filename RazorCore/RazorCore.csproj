@@ -53,28 +53,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cash\CashCalculator.cs" />
-    <Compile Include="Cash\CashInterval.cs" />
-    <Compile Include="Cash\CashIntervalsProvider.cs" />
-    <Compile Include="Cash\ICashIntervalsProvider.cs" />
-    <Compile Include="Cash\IPriceList.cs" />
+    <Compile Include="Cash\CostCalculator.cs" />
     <Compile Include="History\ISubscriptionHistory.cs" />
-    <Compile Include="Subscription\DeliveryTime.cs" />
+    <Compile Include="History\ISubscriptionInterval.cs" />
+    <Compile Include="Subscription\DeliveryInfo.cs" />
     <Compile Include="History\SubscriptionHistory.cs" />
-    <Compile Include="History\HistoryItem.cs" />
-    <Compile Include="Subscription\SubscriptionPlan.cs" />
+    <Compile Include="History\SubscriptionInterval.cs" />
+    <Compile Include="Subscription\IDeliveryInfo.cs" />
+    <Compile Include="Subscription\IProductInfo.cs" />
+    <Compile Include="Subscription\ProductInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscription\DeliveryRegularity.cs" />
     <Compile Include="Subscription\SubscriptionPlanDublicateDeliveryDayException.cs" />
-    <Compile Include="Subscription\SubscriptionTypes.cs" />
-    <Compile Include="Tests\CashCalculatorTest.cs" />
-    <Compile Include="Tests\CashIntervalsProviderBuilder.cs" />
-    <Compile Include="Tests\CashIntervalsProviderTest.cs" />
+    <Compile Include="Subscription\ProductTypes.cs" />
+    <Compile Include="Tests\CostCalculatorTest.cs" />
+    <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
     <Compile Include="Tests\DeliveryTimeTest.cs" />
     <Compile Include="Tests\Helper.cs" />
-    <Compile Include="Tests\PriceListBuilder.cs" />
-    <Compile Include="Tests\SubscriptionHistoryTest.cs" />
-    <Compile Include="Tests\SubscriptionPlanTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

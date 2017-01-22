@@ -1,6 +1,6 @@
 ﻿namespace RazorCore.Subscription
 {
-	public enum SubscriptionTypes
+	public enum ProductTypes
 	{
 		Razor,
 		RazorAndGel,

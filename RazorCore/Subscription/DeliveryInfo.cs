@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace RazorCore.Subscription
 {
-	public class DeliveryTime
+	public class DeliveryInfo : IDeliveryInfo
 	{
 		public readonly int[] DeliveryDays;
 
 		public readonly DeliveryRegularity DeliveryRegularity;
 
-		public DeliveryTime(DeliveryRegularity deliveryRegularity, params int[] deliveryDays)
+		public DeliveryInfo(DeliveryRegularity deliveryRegularity, params int[] deliveryDays)
 		{
 			if (deliveryDays == null)
 				throw new ArgumentNullException(nameof(deliveryDays));
@@ -38,7 +38,7 @@ namespace RazorCore.Subscription
 				case DeliveryRegularity.OncePerTwoMonths:
 				case DeliveryRegularity.OncePerMonth:
 					if (DeliveryDays.Length > 1)
-						throw new ArgumentOutOfRangeException(nameof(DeliveryTime), "Должен быть выбран только один день доставки для (DeliveryRegularity.OncePerTwoMonths или DeliveryRegularity.OncePerMonth).");
+						throw new ArgumentOutOfRangeException(nameof(DeliveryInfo), "Должен быть выбран только один день доставки для (DeliveryRegularity.OncePerTwoMonths или DeliveryRegularity.OncePerMonth).");
 
 					CheckDeliverDayNumber(DeliveryDays[0]);
 
@@ -46,7 +46,7 @@ namespace RazorCore.Subscription
 
 				case DeliveryRegularity.TwicePerMonth:
 					if (DeliveryDays.Length != 2)
-						throw new ArgumentOutOfRangeException(nameof(DeliveryTime), "Должно быть выбрано два дня доставки для (DeliveryRegularity.TwicePerMonth).");
+						throw new ArgumentOutOfRangeException(nameof(DeliveryInfo), "Должно быть выбрано два дня доставки для (DeliveryRegularity.TwicePerMonth).");
 
 					var deliveryDay0 = DeliveryDays[0];
 					var deliveryDay1 = DeliveryDays[1];
@@ -63,7 +63,7 @@ namespace RazorCore.Subscription
 		private void CheckDeliverDayNumber(int deliveryDayNumber)
 		{
 			if (deliveryDayNumber < 1 || deliveryDayNumber > 28)
-				throw new ArgumentOutOfRangeException(nameof(DeliveryTime),
+				throw new ArgumentOutOfRangeException(nameof(DeliveryInfo),
 					$"День доставки должен быть с 1 п 28 число. Выбрано: {deliveryDayNumber}");
 		}
 	}
