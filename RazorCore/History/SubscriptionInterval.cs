@@ -20,6 +20,8 @@ namespace RazorCore.History
 				throw new ArgumentNullException(nameof(productInfo));
 			if (deliveryInfo == null)
 				throw new ArgumentNullException(nameof(deliveryInfo));
+			if(fromDate > toDate)
+				throw new ArgumentOutOfRangeException(nameof(toDate));
 
 			ProductInfo = productInfo;
 			DeliveryInfo = deliveryInfo;
@@ -27,7 +29,7 @@ namespace RazorCore.History
 			ToDate = toDate;
 		}
 
-		public double GetOneDeliveryPrice()
+		public double GetOneDeliveryCost()
 		{
 			return ProductInfo.Price;
 		}

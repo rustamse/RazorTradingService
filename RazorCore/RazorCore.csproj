@@ -71,10 +71,13 @@
     <Compile Include="Subscription\ProductTypes.cs" />
     <Compile Include="Tests\CostCalculatorTest.cs" />
     <Compile Include="Tests\DeliveryDayTest.cs" />
+    <Compile Include="Tests\DeliveryInfoBuilder.cs" />
     <Compile Include="Tests\OncePerMonthDeliveryTest.cs" />
     <Compile Include="Tests\OncePerTwoMonthsDeliveryTest.cs" />
+    <Compile Include="Tests\ProductInfoBuilder.cs" />
     <Compile Include="Tests\ProductInfoTest.cs" />
     <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
+    <Compile Include="Tests\SubscriptionIntervalTest.cs" />
     <Compile Include="Tests\SuspendedDeliveryTest.cs" />
     <Compile Include="Tests\TwicePerMonthDeliveryTest.cs" />
     <Compile Include="Tests\DateTimeExtension.cs" />

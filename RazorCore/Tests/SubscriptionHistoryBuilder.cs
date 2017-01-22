@@ -33,7 +33,7 @@ namespace RazorCore.Tests
 				.Returns(fromDate.ToDate());
 			interval.Setup(subscriptionInterval => subscriptionInterval.ToDate)
 				.Returns(toDate.ToDate());
-			interval.Setup(subscriptionInterval => subscriptionInterval.GetOneDeliveryPrice())
+			interval.Setup(subscriptionInterval => subscriptionInterval.GetOneDeliveryCost())
 				.Returns(productPrice);
 			interval.Setup(subscriptionInterval => subscriptionInterval.GetDeliveryDates())
 				.Returns(deliveryDays.ToList().Select(DateTimeExtension.ToDate).ToList());

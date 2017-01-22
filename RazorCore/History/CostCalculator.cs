@@ -29,7 +29,7 @@ namespace RazorCore.History
 			var deliveriesCount = subscriptionInterval.GetDeliveryDates()
 				.Count;
 
-			var oneDeliveryPrice = subscriptionInterval.GetOneDeliveryPrice();
+			var oneDeliveryPrice = subscriptionInterval.GetOneDeliveryCost();
 			return oneDeliveryPrice * deliveriesCount;
 		}
 	}

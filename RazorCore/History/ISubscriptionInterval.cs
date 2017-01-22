@@ -8,7 +8,7 @@ namespace RazorCore.History
 		DateTime FromDate { get; }
 		DateTime ToDate { get; }
 
-		double GetOneDeliveryPrice();
+		double GetOneDeliveryCost();
 		List<DateTime> GetDeliveryDates();
 	}
 }
