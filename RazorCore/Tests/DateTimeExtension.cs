@@ -3,9 +3,9 @@ using System.Globalization;
 
 namespace RazorCore.Tests
 {
-	class Helper
+	static class DateTimeExtension
 	{
-		public static DateTime GenerateSubscrDate(string date)
+		public static DateTime ToDate(this string date)
 		{
 			var generateSubscrDate = DateTime.Parse(date, CultureInfo.InvariantCulture);
 			return generateSubscrDate.Date;

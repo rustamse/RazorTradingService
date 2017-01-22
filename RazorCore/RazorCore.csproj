@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cash\CostCalculator.cs" />
+    <Compile Include="History\CostCalculator.cs" />
     <Compile Include="History\ISubscriptionHistory.cs" />
     <Compile Include="History\ISubscriptionInterval.cs" />
     <Compile Include="Subscription\DeliveryInfo.cs" />
@@ -68,8 +68,8 @@
     <Compile Include="Subscription\ProductTypes.cs" />
     <Compile Include="Tests\CostCalculatorTest.cs" />
     <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
-    <Compile Include="Tests\DeliveryTimeTest.cs" />
-    <Compile Include="Tests\Helper.cs" />
+    <Compile Include="Tests\DeliveryInfoTest.cs" />
+    <Compile Include="Tests\DateTimeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

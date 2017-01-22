@@ -30,13 +30,13 @@ namespace RazorCore.Tests
 		{
 			var interval = new Mock<ISubscriptionInterval>();
 			interval.Setup(subscriptionInterval => subscriptionInterval.FromDate)
-				.Returns(Helper.GenerateSubscrDate(fromDate));
+				.Returns(fromDate.ToDate());
 			interval.Setup(subscriptionInterval => subscriptionInterval.ToDate)
-				.Returns(Helper.GenerateSubscrDate(toDate));
+				.Returns(toDate.ToDate());
 			interval.Setup(subscriptionInterval => subscriptionInterval.GetOneDeliveryPrice())
 				.Returns(productPrice);
 			interval.Setup(subscriptionInterval => subscriptionInterval.GetDeliveryDates())
-				.Returns(deliveryDays.ToList().Select(Helper.GenerateSubscrDate).ToList());
+				.Returns(deliveryDays.ToList().Select(DateTimeExtension.ToDate).ToList());
 
 			_intervals.Add(interval.Object);
 

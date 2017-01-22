@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using RazorCore.History;
 
-namespace RazorCore.Cash
+namespace RazorCore.History
 {
 	public class CostCalculator
 	{

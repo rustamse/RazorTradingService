@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RazorCore.Cash;
+using RazorCore.History;
 
 namespace RazorCore.Tests
 {
