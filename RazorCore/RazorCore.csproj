@@ -56,20 +56,27 @@
     <Compile Include="History\CostCalculator.cs" />
     <Compile Include="History\ISubscriptionHistory.cs" />
     <Compile Include="History\ISubscriptionInterval.cs" />
-    <Compile Include="Subscription\DeliveryInfo.cs" />
+    <Compile Include="Subscription\DeliveryDay.cs" />
+    <Compile Include="Subscription\OncePerMonthDelivery.cs" />
+    <Compile Include="Subscription\OncePerTwoMonthsDelivery.cs" />
+    <Compile Include="Subscription\SuspendedDelivery.cs" />
+    <Compile Include="Subscription\TwicePerMonthDelivery.cs" />
     <Compile Include="History\SubscriptionHistory.cs" />
     <Compile Include="History\SubscriptionInterval.cs" />
     <Compile Include="Subscription\IDeliveryInfo.cs" />
     <Compile Include="Subscription\IProductInfo.cs" />
     <Compile Include="Subscription\ProductInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Subscription\DeliveryRegularity.cs" />
-    <Compile Include="Subscription\SubscriptionPlanDublicateDeliveryDayException.cs" />
+    <Compile Include="Subscription\TwicePerMonthDeliveryDublicateDaysException.cs" />
     <Compile Include="Subscription\ProductTypes.cs" />
     <Compile Include="Tests\CostCalculatorTest.cs" />
+    <Compile Include="Tests\DeliveryDayTest.cs" />
+    <Compile Include="Tests\OncePerMonthDeliveryTest.cs" />
+    <Compile Include="Tests\OncePerTwoMonthsDeliveryTest.cs" />
     <Compile Include="Tests\ProductInfoTest.cs" />
     <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
-    <Compile Include="Tests\DeliveryInfoTest.cs" />
+    <Compile Include="Tests\SuspendedDeliveryTest.cs" />
+    <Compile Include="Tests\TwicePerMonthDeliveryTest.cs" />
     <Compile Include="Tests\DateTimeExtension.cs" />
   </ItemGroup>
   <ItemGroup>

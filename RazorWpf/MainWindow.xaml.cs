@@ -63,7 +63,7 @@ namespace RazorWpf
 
 				Update();
 			}
-			catch (SubscriptionPlanDublicateDeliveryDayException ex)
+			catch (TwicePerMonthDeliveryDublicateDaysException ex)
 			{
 				MessageBox.Show(ex.Message, "Неверно выбраны дни доставки.");
 			}
@@ -120,7 +120,7 @@ namespace RazorWpf
 		{
 			ProductTypes productType;
 			DeliveryRegularity deliveryRegularity;
-			DeliveryInfo deliveryInfo;
+			TwicePerMonthDelivery twicePerMonthDelivery;
 
 			if (RazorAndGelCheckBox.IsChecked == true)
 			{
@@ -137,23 +137,23 @@ namespace RazorWpf
 
 			if (DeliveryOncePer2MonthsCheckBox.IsChecked == true)
 			{
-				deliveryInfo = new DeliveryInfo(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryOncePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryInfo = new DeliveryInfo(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
 			}
 			else if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
 			{
-				deliveryInfo = new DeliveryInfo(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
+				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
 					DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
 			}
 			else
 			{
-				deliveryInfo = new DeliveryInfo(DeliveryRegularity.Suspended, 1);
+				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.Suspended, 1);
 			}
 
-			var subscriptionPlan = new SubscriptionPlan(productType, deliveryInfo);
+			var subscriptionPlan = new SubscriptionPlan(productType, twicePerMonthDelivery);
 			return subscriptionPlan;
 		}
 	}
