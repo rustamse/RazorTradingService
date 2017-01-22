@@ -1,4 +1,6 @@
-﻿namespace RazorCore.Subscription
+﻿using System;
+
+namespace RazorCore.Subscription
 {
 	public class ProductInfo : IProductInfo
 	{
@@ -8,6 +10,9 @@
 
 		public ProductInfo(ProductTypes productType, double price)
 		{
+			if (price <= 0)
+				throw new ArgumentOutOfRangeException(nameof(price));
+
 			ProductType = productType;
 			Price = price;
 		}

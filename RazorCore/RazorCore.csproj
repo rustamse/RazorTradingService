@@ -67,6 +67,7 @@
     <Compile Include="Subscription\SubscriptionPlanDublicateDeliveryDayException.cs" />
     <Compile Include="Subscription\ProductTypes.cs" />
     <Compile Include="Tests\CostCalculatorTest.cs" />
+    <Compile Include="Tests\ProductInfoTest.cs" />
     <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
     <Compile Include="Tests\DeliveryInfoTest.cs" />
     <Compile Include="Tests\DateTimeExtension.cs" />
