@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using RazorCore.History;
 using RazorCore.Subscription;
 
 namespace RazorWpf
@@ -11,9 +12,12 @@ namespace RazorWpf
 	/// </summary>
 	public partial class MainWindow
 	{
-		private readonly CashController _cashController;
-
 		private CalenderBackground _calendarBackground;
+
+		private readonly SubscriptionHistory _subscriptionHistory = new SubscriptionHistory();
+		private const int RazorPrice = 1;
+		private const int RazorAndGelPrice = 9;
+		private const int RazorAndGelAndFoamPrice = 19;
 
 		public MainWindow()
 		{
@@ -32,13 +36,10 @@ namespace RazorWpf
 			DeliveryTwicePerMonthComboBox.SelectedIndex = 0;
 			DeliveryTwicePerMonthComboBox2.SelectedIndex = 14;
 
-			var priceList = new PriceList(1, 9, 19);
-			_cashController = new CashController(DateTime.Now.Date, priceList);
-
 			Calendar.DisplayDateChanged += CalendarOnDisplayDateChanged;
 
 			Calendar.SelectedDatesChanged += CalendarOnSelectedDatesChanged;
-			Calendar.SelectedDate = _cashController.CurrentDate;
+			Calendar.SelectedDate = DateTime.Now.Date;
 
 			Update();
 		}
@@ -57,9 +58,11 @@ namespace RazorWpf
 		{
 			try
 			{
-				var subscriptionPlan = ParseSubscriptionPlan();
+				var productInfo = ParseProductInfo();
+				var deliveryInfo = ParseDeliveryInfo();
+				var selectedDate = ParseSelectedDate();
 
-				_cashController.AddOrUpdateSubscriptionPlan(subscriptionPlan);
+				_subscriptionHistory.AddSubscription(productInfo, deliveryInfo, selectedDate);
 
 				Update();
 			}
@@ -67,15 +70,18 @@ namespace RazorWpf
 			{
 				MessageBox.Show(ex.Message, "Неверно выбраны дни доставки.");
 			}
+			catch (SubscriptionHistoryOldIntervalException)
+			{
+				MessageBox.Show("Нельзя изменить подписку для архивной подписки", "Неверно изменена подписка.");
+			}
 		}
 
 		private void Update()
 		{
-			// ReSharper disable once PossibleInvalidOperationException
-			var calendarSelectedDate = Calendar.SelectedDate.Value;
-			_cashController.CurrentDate = calendarSelectedDate;
+			var calendarSelectedDate = ParseSelectedDate();
+			_subscriptionHistory.UpdateSubscription(calendarSelectedDate);
 
-			var deliveryDays = _cashController.GetFutureDeliveryDays(_cashController.CurrentDate.AddYears(100));
+			var deliveryDays = _subscriptionHistory.GetFutureDeliveryDays(calendarSelectedDate.AddYears(100));
 
 			_calendarBackground = new CalenderBackground(Calendar);
 			_calendarBackground.AddOverlay("circle", "circle.png");
@@ -86,16 +92,19 @@ namespace RazorWpf
 
 			_calendarBackground.grayoutweekends = "gray";
 
-			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
+			Calendar.Background = _calendarBackground.GetBackground(calendarSelectedDate);
 
 			foreach (var deliveryDay in deliveryDays)
 			{
 				_calendarBackground.AddDate(deliveryDay, "circle");
 			}
-			Calendar.Background = _calendarBackground.GetBackground(_cashController.CurrentDate);
-			CashTxt.Text = ((int)_cashController.CalculateTotalCash()).ToString();
 
-			MakeSubscription.Content = _cashController.FindActivePlan() != null ?
+			var costCalculator = new CostCalculator(_subscriptionHistory);
+
+			Calendar.Background = _calendarBackground.GetBackground(calendarSelectedDate);
+			CashTxt.Text = ((int)costCalculator.CalculateTotalCost()).ToString();
+
+			MakeSubscription.Content = _subscriptionHistory.GetHistory().Any() ?
 				$"Изменить подписку с {calendarSelectedDate.ToString("d")}" :
 				$"Оформить подписку с {calendarSelectedDate.ToString("d")}";
 
@@ -107,54 +116,52 @@ namespace RazorWpf
 		private void DrawSubscriptionHistory()
 		{
 			SubscrHistoryList.Items.Clear();
-			foreach (var historyItem in _cashController.GetSubscriptionHistory())
+			foreach (var historyItem in _subscriptionHistory.GetHistory())
 			{
 				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
-											$"Тип: {historyItem.SubscriptionPlan.ProductType}, " +
-											$"Доставка: {historyItem.SubscriptionPlan.DeliveryInfo.DeliveryRegularity}, " +
-											$"{historyItem.SubscriptionPlan.DeliveryInfo.DeliveryDays.FirstOrDefault()}, {historyItem.SubscriptionPlan.DeliveryInfo.DeliveryDays.LastOrDefault()}");
+											$"Конец {historyItem.ToDate:d}");
 			}
 		}
 
-		private SubscriptionPlan ParseSubscriptionPlan()
+		private DateTime ParseSelectedDate()
 		{
-			ProductTypes productType;
-			DeliveryRegularity deliveryRegularity;
-			TwicePerMonthDelivery twicePerMonthDelivery;
+			// ReSharper disable once PossibleInvalidOperationException
+			return Calendar.SelectedDate.Value.Date;
+		}
 
-			if (RazorAndGelCheckBox.IsChecked == true)
-			{
-				productType = ProductTypes.RazorAndGel;
-			}
-			else if (RazorAndGelAndFoamCheckBox.IsChecked == true)
-			{
-				productType = ProductTypes.RazorAndGelAndFoam;
-			}
-			else
-			{
-				productType = ProductTypes.Razor;
-			}
-
+		private IDeliveryInfo ParseDeliveryInfo()
+		{
 			if (DeliveryOncePer2MonthsCheckBox.IsChecked == true)
 			{
-				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.OncePerTwoMonths, DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+				var deliveryDay = new DeliveryDay(DeliveryOncePer2MonthsComboBox.SelectedIndex + 1);
+				return new OncePerTwoMonthsDelivery(deliveryDay);
 			}
-			else if (DeliveryOncePerMonthCheckBox.IsChecked == true)
+			if (DeliveryOncePerMonthCheckBox.IsChecked == true)
 			{
-				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.OncePerMonth, DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+				var deliveryDay = new DeliveryDay(DeliveryOncePerMonthComboBox.SelectedIndex + 1);
+				return new OncePerMonthDelivery(deliveryDay);
 			}
-			else if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
+			if (DeliveryTwicePerMonthCheckBox.IsChecked == true)
 			{
-				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.TwicePerMonth, DeliveryTwicePerMonthComboBox.SelectedIndex + 1,
-					DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
+				var deliveryFirstDay = new DeliveryDay(DeliveryTwicePerMonthComboBox.SelectedIndex + 1);
+				var deliverySecondDay = new DeliveryDay(DeliveryTwicePerMonthComboBox2.SelectedIndex + 1);
+				return new TwicePerMonthDelivery(deliveryFirstDay,
+					deliverySecondDay);
 			}
-			else
-			{
-				twicePerMonthDelivery = new TwicePerMonthDelivery(DeliveryRegularity.Suspended, 1);
-			}
+			return new SuspendedDelivery();
+		}
 
-			var subscriptionPlan = new SubscriptionPlan(productType, twicePerMonthDelivery);
-			return subscriptionPlan;
+		private IProductInfo ParseProductInfo()
+		{
+			if (RazorAndGelCheckBox.IsChecked == true)
+			{
+				return new ProductInfo(ProductTypes.RazorAndGel, RazorAndGelPrice);
+			}
+			if (RazorAndGelAndFoamCheckBox.IsChecked == true)
+			{
+				return new ProductInfo(ProductTypes.RazorAndGelAndFoam, RazorAndGelAndFoamPrice);
+			}
+			return new ProductInfo(ProductTypes.Razor, RazorPrice);
 		}
 	}
 }

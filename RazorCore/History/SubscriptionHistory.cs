@@ -1,37 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using RazorCore.Subscription;
 
 namespace RazorCore.History
 {
 	public class SubscriptionHistory : ISubscriptionHistory
 	{
-		private readonly List<ISubscriptionInterval> _historyItems = new List<ISubscriptionInterval>();
+		private readonly List<ISubscriptionInterval> _historyIntervals = new List<ISubscriptionInterval>();
 
-		public void AddSubscrption(IProductInfo productInfo, IDeliveryInfo deliveryInfo,
-			DateTime fromDate, DateTime toDate)
+		public void AddSubscription(IProductInfo productInfo, IDeliveryInfo deliveryInfo,
+			DateTime subscrDate)
 		{
 			if (productInfo == null)
 				throw new ArgumentNullException(nameof(productInfo));
 			if (deliveryInfo == null)
 				throw new ArgumentNullException(nameof(deliveryInfo));
 
-			var subscriptionInterval = new SubscriptionInterval(productInfo, deliveryInfo,
-				fromDate.Date, toDate.Date);
-			_historyItems.Add(subscriptionInterval);
+			if (_historyIntervals.Any())
+			{
+				if (subscrDate < _historyIntervals.Last().FromDate)
+					throw new SubscriptionHistoryOldIntervalException();
 
-			SortHistoryItemsByAsc();
+				if (subscrDate == _historyIntervals.Last().FromDate)
+					_historyIntervals.Remove(_historyIntervals.Last());
+				else
+					_historyIntervals.Last().ModifyToDate(subscrDate.AddDays(-1));
+			}
+
+			var interval = new SubscriptionInterval(productInfo, deliveryInfo,
+				subscrDate, subscrDate);
+			_historyIntervals.Add(interval);
+		}
+
+		public void UpdateSubscription(DateTime toDate)
+		{
+			if (!_historyIntervals.Any())
+				return;
+
+			var lastInterval = _historyIntervals.Last();
+
+			if (toDate >= lastInterval.FromDate)
+			{
+				lastInterval.ModifyToDate(toDate);
+			}
 		}
 
 		public ReadOnlyCollection<ISubscriptionInterval> GetHistory()
 		{
-			return new ReadOnlyCollection<ISubscriptionInterval>(_historyItems);
+			return new ReadOnlyCollection<ISubscriptionInterval>(_historyIntervals);
 		}
 
-		private void SortHistoryItemsByAsc()
+		public IEnumerable<DateTime> GetFutureDeliveryDays(DateTime endDate)
 		{
-			_historyItems.Sort((item, historyItem) => item.FromDate.CompareTo(historyItem.FromDate));
+			yield return DateTime.Now.Date.AddDays(10);
 		}
 	}
 }
