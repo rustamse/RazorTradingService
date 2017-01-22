@@ -34,7 +34,7 @@ namespace RazorCore.History
 			_historyIntervals.Add(interval);
 		}
 
-		public void UpdateSubscription(DateTime toDate)
+		public void UpdateSubscriptionEndDate(DateTime toDate)
 		{
 			if (!_historyIntervals.Any())
 				return;
@@ -50,11 +50,6 @@ namespace RazorCore.History
 		public ReadOnlyCollection<ISubscriptionInterval> GetHistory()
 		{
 			return new ReadOnlyCollection<ISubscriptionInterval>(_historyIntervals);
-		}
-
-		public IEnumerable<DateTime> GetFutureDeliveryDays(DateTime endDate)
-		{
-			yield return DateTime.Now.Date.AddDays(10);
 		}
 	}
 }

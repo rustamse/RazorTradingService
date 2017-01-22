@@ -14,7 +14,7 @@ namespace RazorWpf
 	{
 		private CalenderBackground _calendarBackground;
 
-		private readonly SubscriptionHistory _subscriptionHistory = new SubscriptionHistory();
+		private readonly ISubscriptionHistory _subscriptionHistory = new SubscriptionHistory();
 		private const int RazorPrice = 1;
 		private const int RazorAndGelPrice = 9;
 		private const int RazorAndGelAndFoamPrice = 19;
@@ -79,9 +79,7 @@ namespace RazorWpf
 		private void Update()
 		{
 			var calendarSelectedDate = ParseSelectedDate();
-			_subscriptionHistory.UpdateSubscription(calendarSelectedDate);
-
-			var deliveryDays = _subscriptionHistory.GetFutureDeliveryDays(calendarSelectedDate.AddYears(100));
+			_subscriptionHistory.UpdateSubscriptionEndDate(calendarSelectedDate);
 
 			_calendarBackground = new CalenderBackground(Calendar);
 			_calendarBackground.AddOverlay("circle", "circle.png");
@@ -94,9 +92,15 @@ namespace RazorWpf
 
 			Calendar.Background = _calendarBackground.GetBackground(calendarSelectedDate);
 
-			foreach (var deliveryDay in deliveryDays)
+			var subscriptionIntervals = _subscriptionHistory.GetHistory();
+			if (subscriptionIntervals.Any())
 			{
-				_calendarBackground.AddDate(deliveryDay, "circle");
+				var copy = subscriptionIntervals.Last().CreateCopy();
+				copy.ModifyToDate(copy.ToDate.AddYears(10));
+				foreach (var deliveryDay in copy.GetDeliveryDates())
+				{
+					_calendarBackground.AddDate(deliveryDay, "circle");
+				}
 			}
 
 			var costCalculator = new CostCalculator(_subscriptionHistory);
@@ -116,10 +120,9 @@ namespace RazorWpf
 		private void DrawSubscriptionHistory()
 		{
 			SubscrHistoryList.Items.Clear();
-			foreach (var historyItem in _subscriptionHistory.GetHistory())
+			foreach (var subscriptionInterval in _subscriptionHistory.GetHistory())
 			{
-				SubscrHistoryList.Items.Add($"Начало {historyItem.FromDate:d}, " +
-											$"Конец {historyItem.ToDate:d}");
+				SubscrHistoryList.Items.Add($"{subscriptionInterval.GetDescription()}");
 			}
 		}
 

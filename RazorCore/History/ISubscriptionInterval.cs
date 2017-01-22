@@ -11,7 +11,10 @@ namespace RazorCore.History
 		double GetOneDeliveryCost();
 		List<DateTime> GetDeliveryDates();
 
-		void ModifyFromDate(DateTime newFromDate);
 		void ModifyToDate(DateTime newToDate);
+
+		ISubscriptionInterval CreateCopy();
+
+		string GetDescription();
 	}
 }

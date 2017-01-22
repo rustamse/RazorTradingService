@@ -21,6 +21,11 @@ namespace RazorCore.Subscription
 			_deliverySecondDay = deliverySecondDay;
 		}
 
+		public string GetDescription()
+		{
+			return "TwicePerMonthDelivery";
+		}
+
 		public bool IsDeliveryDay(DateTime checkDate)
 		{
 			var isDeliveryDay1EqualsCheckDay = _deliveryFirstDay.DayOfMonth == checkDate.Day;

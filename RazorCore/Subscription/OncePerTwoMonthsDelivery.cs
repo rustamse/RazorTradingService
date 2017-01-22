@@ -14,6 +14,11 @@ namespace RazorCore.Subscription
 			_deliveryDay = deliveryDay;
 		}
 
+		public string GetDescription()
+		{
+			return "OncePerTwoMonthsDelivery";
+		}
+
 		public bool IsDeliveryDay(DateTime checkDate)
 		{
 			var isEvenMonth = checkDate.Month % 2 == 0;

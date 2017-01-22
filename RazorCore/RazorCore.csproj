@@ -78,6 +78,7 @@
     <Compile Include="Tests\ProductInfoBuilder.cs" />
     <Compile Include="Tests\ProductInfoTest.cs" />
     <Compile Include="Tests\SubscriptionHistoryBuilder.cs" />
+    <Compile Include="Tests\SubscriptionHistoryTest.cs" />
     <Compile Include="Tests\SubscriptionIntervalTest.cs" />
     <Compile Include="Tests\SuspendedDeliveryTest.cs" />
     <Compile Include="Tests\TwicePerMonthDeliveryTest.cs" />

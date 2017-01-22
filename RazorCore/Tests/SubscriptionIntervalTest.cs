@@ -75,6 +75,22 @@ namespace RazorCore.Tests
 		}
 
 		[Test]
+		public void ToDate_WHenModifyToDateToFeb2_ReturnsFeb2()
+		{
+			var newToDate = "2 feb 2017".ToDate();
+
+			var fromDate = "1 jan 2017".ToDate();
+			var toDate = "1 feb 2017".ToDate();
+			var productInfo = ProductInfoBuilder.Create().Build();
+			var deliveryInfo = DeliveryInfoBuilder.Create().Build();
+			var interval = new SubscriptionInterval(productInfo, deliveryInfo, fromDate, toDate);
+
+			interval.ModifyToDate(newToDate);
+
+			Assert.AreEqual(newToDate, interval.ToDate);
+		}
+
+		[Test]
 		public void GetOneDeliveryPrice_WhenProductPrice10_Returns10()
 		{
 			var productPrice = 10;
@@ -111,6 +127,25 @@ namespace RazorCore.Tests
 
 			Assert.AreEqual(deliveryFirstDate, deliveryDates.First());
 			Assert.AreEqual(deliverySecondDate, deliveryDates.Last());
+		}
+
+		[Test]
+		public void CreateCopy_WhenModifyToDateToFeb2_ReturnsFeb2()
+		{
+			var price = 6;
+			var fromDate = "1 jan 2017".ToDate();
+			var toDate = "1 feb 2017".ToDate();
+			var productInfo = ProductInfoBuilder.Create()
+				.WithPrice(price)
+				.Build();
+			var deliveryInfo = DeliveryInfoBuilder.Create().Build();
+			var interval = new SubscriptionInterval(productInfo, deliveryInfo, fromDate, toDate);
+
+			var copy = interval.CreateCopy();
+
+			Assert.AreEqual(toDate, copy.ToDate);
+			Assert.AreEqual(fromDate, copy.FromDate);
+			Assert.AreEqual(price, copy.GetOneDeliveryCost());
 		}
 	}
 }

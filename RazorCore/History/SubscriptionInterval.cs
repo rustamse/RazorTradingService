@@ -4,14 +4,13 @@ using RazorCore.Subscription;
 
 namespace RazorCore.History
 {
-	public class SubscriptionInterval : ISubscriptionInterval
+	class SubscriptionInterval : ISubscriptionInterval
 	{
-		public readonly IProductInfo ProductInfo;
-		public readonly IDeliveryInfo DeliveryInfo;
-
-		public DateTime FromDate { get; private set; }
-
+		public DateTime FromDate { get; }
 		public DateTime ToDate { get; private set; }
+
+		private readonly IProductInfo _productInfo;
+		private readonly IDeliveryInfo _deliveryInfo;
 
 		public SubscriptionInterval(IProductInfo productInfo, IDeliveryInfo deliveryInfo,
 			DateTime fromDate, DateTime toDate)
@@ -23,19 +22,10 @@ namespace RazorCore.History
 			if (fromDate > toDate)
 				throw new ArgumentOutOfRangeException(nameof(toDate));
 
-			ProductInfo = productInfo;
-			DeliveryInfo = deliveryInfo;
+			_productInfo = productInfo;
+			_deliveryInfo = deliveryInfo;
 			FromDate = fromDate;
 			ToDate = toDate;
-		}
-
-
-		public void ModifyFromDate(DateTime newFromDate)
-		{
-			if (ToDate < newFromDate)
-				throw new ArgumentOutOfRangeException(nameof(newFromDate));
-
-			FromDate = newFromDate;
 		}
 
 		public void ModifyToDate(DateTime newToDate)
@@ -48,7 +38,7 @@ namespace RazorCore.History
 
 		public double GetOneDeliveryCost()
 		{
-			return ProductInfo.Price;
+			return _productInfo.Price;
 		}
 
 		public List<DateTime> GetDeliveryDates()
@@ -58,7 +48,7 @@ namespace RazorCore.History
 			var deliveryDates = new List<DateTime>();
 			while (checkDate <= ToDate)
 			{
-				var isDeliveryDay = DeliveryInfo.IsDeliveryDay(checkDate);
+				var isDeliveryDay = _deliveryInfo.IsDeliveryDay(checkDate);
 
 				if (isDeliveryDay)
 					deliveryDates.Add(checkDate);
@@ -66,6 +56,16 @@ namespace RazorCore.History
 				checkDate = checkDate.AddDays(1);
 			}
 			return deliveryDates;
+		}
+
+		public ISubscriptionInterval CreateCopy()
+		{
+			return new SubscriptionInterval(_productInfo, _deliveryInfo, FromDate, ToDate);
+		}
+
+		public string GetDescription()
+		{
+			return $"{_deliveryInfo.GetDescription()} ({FromDate:d} - {ToDate:d}),price:{_productInfo.Price}";
 		}
 	}
 }

@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using RazorCore.Subscription;
 
 namespace RazorCore.History
 {
 	public interface ISubscriptionHistory
 	{
-		ReadOnlyCollection<ISubscriptionInterval> GetHistory();
+		void AddSubscription(IProductInfo productInfo, IDeliveryInfo deliveryInfo,
+			DateTime subscrDate);
 
-		IEnumerable<DateTime> GetFutureDeliveryDays(DateTime endDate);
+		void UpdateSubscriptionEndDate(DateTime toDate);
+
+		ReadOnlyCollection<ISubscriptionInterval> GetHistory();
 	}
 }
