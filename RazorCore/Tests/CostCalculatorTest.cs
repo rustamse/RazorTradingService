@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using RazorCore.History;
 
 namespace RazorCore.Tests
@@ -6,6 +7,16 @@ namespace RazorCore.Tests
 	[TestFixture]
 	public class CostCalculatorTest
 	{
+		[Test]
+		public void Ctor_WhenArgumentNull_ThrowsArgumentNullException()
+		{
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				// ReSharper disable once UnusedVariable
+				var calculator = new CostCalculator(null);
+			});
+		}
+
 		[Test]
 		public void CalculateTotalCost_WhenEmptyHistory_Returns0()
 		{
@@ -20,17 +31,17 @@ namespace RazorCore.Tests
 		[Test]
 		public void CalculateTotalCost_WhenHistoryHasOneDelivery_ReturnsCostOfOneDelivery()
 		{
-			var razorPricePerOneDelivery = 1;
+			var pricePerOneDelivery = 1;
 
 			var subscriptionHistory = SubscriptionHistoryBuilder.Create()
-				.WithInterval("1 jan 2017", "1 feb 2017", razorPricePerOneDelivery, "10 jan 2017")
+				.WithInterval("1 jan 2017", "1 feb 2017", pricePerOneDelivery, "10 jan 2017")
 				.Build();
 
 			var calculator = new CostCalculator(subscriptionHistory);
 
 			var calculateTotalCost = calculator.CalculateTotalCost();
 
-			Assert.AreEqual(razorPricePerOneDelivery, calculateTotalCost);
+			Assert.AreEqual(pricePerOneDelivery, calculateTotalCost);
 		}
 
 		[Test]
@@ -52,12 +63,12 @@ namespace RazorCore.Tests
 		}
 
 		[Test]
-		public void CalculateTotalCost_WhenDeliverySuspended_ReturnsZeroCost()
+		public void CalculateTotalCost_WhenHistoryHasNoDeliveries_ReturnsZeroCost()
 		{
-			var razorAndGelAndFoamPricePerOnemonth = 19;
+			var pricePerDelivery = 19;
 
 			var subscriptionHistory = SubscriptionHistoryBuilder.Create()
-				.WithInterval("1 jan 2017", "1 jan 2018", razorAndGelAndFoamPricePerOnemonth)
+				.WithInterval("1 jan 2017", "1 jan 2018", pricePerDelivery)
 				.Build();
 			var calculator = new CostCalculator(subscriptionHistory);
 
@@ -67,20 +78,20 @@ namespace RazorCore.Tests
 		}
 
 		[Test]
-		public void CalculateTotalCost_WhenDeliverySuspendAfterOneDeliveryAfterSuspended_ReturnsOneDeliveryCost()
+		public void CalculateTotalCost_WhenHistoryOf3IntervalsHasOnlyOneDelivery_ReturnsOneDeliveryCost()
 		{
-			var razorAndGelAndFoamPricePerOnemonth = 19;
+			var pricePerDelivery = 19;
 
 			var subscriptionHistory = SubscriptionHistoryBuilder.Create()
-				.WithInterval("1 jan 2017", "1 feb 2017", razorAndGelAndFoamPricePerOnemonth)
-				.WithInterval("2 feb 2017", "1 mar 2017", razorAndGelAndFoamPricePerOnemonth, "16 feb 2017")
-				.WithInterval("2 mar 2017", "1 apr 2017", razorAndGelAndFoamPricePerOnemonth)
+				.WithInterval("1 jan 2017", "1 feb 2017", pricePerDelivery)
+				.WithInterval("2 feb 2017", "1 mar 2017", pricePerDelivery, "16 feb 2017")
+				.WithInterval("2 mar 2017", "1 apr 2017", pricePerDelivery)
 				.Build();
 			var calculator = new CostCalculator(subscriptionHistory);
 
 			var calculateTotalCost = calculator.CalculateTotalCost();
 
-			Assert.AreEqual(1 * razorAndGelAndFoamPricePerOnemonth, calculateTotalCost);
+			Assert.AreEqual(1 * pricePerDelivery, calculateTotalCost);
 		}
 	}
 }
